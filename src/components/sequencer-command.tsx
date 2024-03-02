@@ -12,8 +12,40 @@ import {
 import { DeleteIcon, SaveIcon, ShareIcon } from 'lucide-react';
 import React from 'react';
 
-export default function sequencorCommand() {
+type Props = {
+  toast: any;
+  samples: { url: string; name: string | undefined }[];
+  numOfSteps?: number;
+  checkedSteps: string[];
+  handleSaveClick: () => void;
+  handleClearSessionClick: () => void;
+};
+
+export default function sequencorCommand({
+  toast,
+  samples,
+  numOfSteps,
+  checkedSteps,
+  handleSaveClick,
+  handleClearSessionClick,
+}: Props) {
   const [open, setOpen] = React.useState(false);
+
+  const handleSessionSave = async () => {
+    try {
+      handleSaveClick();
+      setOpen(false);
+    } catch (err) {}
+  };
+
+  const handleSessionDelete = async () => {
+    try {
+      handleClearSessionClick();
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -21,20 +53,23 @@ export default function sequencorCommand() {
         e.preventDefault();
         setOpen((open) => !open);
       }
-      if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
+      if (open && e.key === 'b' && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
+        handleSessionSave();
       }
-      if (e.key === 'q' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'q' && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
+        handleSessionDelete();
       }
-      if (e.key === 'd' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'z' && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
+        handleSessionDelete();
       }
     };
 
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
-  }, []);
+  }, [open]);
 
   return (
     <>
@@ -43,7 +78,7 @@ export default function sequencorCommand() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Actions">
-            <CommandItem>
+            <CommandItem onSelect={handleSessionSave}>
               <SaveIcon className="mr-2 h-4 w-4" />
               Save Session
               <CommandShortcut>⌘B</CommandShortcut>
@@ -53,10 +88,10 @@ export default function sequencorCommand() {
               Share Session
               <CommandShortcut>⌘Q</CommandShortcut>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={handleSessionDelete}>
               <DeleteIcon className="mr-2 h-4 w-4" />
               Delete Session
-              <CommandShortcut>⌘D</CommandShortcut>
+              <CommandShortcut>⌘Z</CommandShortcut>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />

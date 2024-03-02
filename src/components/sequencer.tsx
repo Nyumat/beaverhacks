@@ -98,7 +98,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     }
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = React.useCallback(async () => {
     try {
       const data = {
         samples: samplesState,
@@ -117,9 +117,9 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       });
       console.error(err);
     }
-  };
+  }, [samplesState, numOfSteps, checkedSteps, toast]);
 
-  const handleClearSessionClick = async () => {
+  const handleClearSessionClick = React.useCallback(async () => {
     try {
       localStorage.removeItem('data');
       toast({
@@ -133,7 +133,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       });
       console.error(err);
     }
-  };
+  }, [toast]);
 
   React.useEffect(() => {
     const data = localStorage.getItem('data');
@@ -404,7 +404,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </label>
         </div>
         <Toaster />
-        <SequencerCommand />
+        <SequencerCommand
+          toast={toast}
+          samples={samplesState}
+          numOfSteps={numOfSteps}
+          checkedSteps={checkedSteps}
+          handleSaveClick={handleSaveClick}
+          handleClearSessionClick={handleClearSessionClick}
+        />
       </div>
     </>
   );
