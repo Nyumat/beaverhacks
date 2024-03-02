@@ -3,8 +3,9 @@
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Reorder } from 'framer-motion';
+import { PlusIcon } from 'lucide-react';
 import React, { useEffect, useCallback } from 'react';
-import Dropzone, { useDropzone } from 'react-dropzone';
+import { useDropzone } from 'react-dropzone';
 import * as Tone from 'tone';
 const NOTE = 'C2';
 
@@ -31,12 +32,12 @@ const baseStyle = {
   borderStyle: 'dashed',
   cursor: 'pointer',
   backgroundColor: '#404040',
-  color: 'white',
+  color: '#f7fff0',
   transition: 'border .24s ease-in-out',
 };
 
 const focusedStyle = {
-  borderColor: '#22c55e',
+  borderColor: '#99c8ff',
 };
 
 const acceptStyle = {
@@ -63,7 +64,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const stepIds = [...Array(numOfSteps).keys()] as const;
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
     setSampleState((prev) => {
       const formatedAcceptedFiles = acceptedFiles.map((file) => {
         const url = URL.createObjectURL(file);
@@ -197,7 +197,10 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     [isFocused, isDragAccept, isDragReject]
   );
 
-  const handleRename = (e, trackId) => {
+  const handleRename = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    trackId: number
+  ) => {
     setSampleState((prev) => {
       const mutatedPrev = [...prev];
       mutatedPrev[trackId].name = e.target.value;
@@ -301,6 +304,18 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               </Reorder.Item>
             ))}
           </Reorder.Group>
+          <div className="w-full">
+            <div
+              className="container mt-10 w-full"
+              {...getRootProps({ style })}
+            >
+              <input {...getInputProps()} />
+              <div className="flex gap-3">
+                <PlusIcon />
+                <p>Drag 'n' drop some files here, or click to select files</p>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
           <button
@@ -343,12 +358,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               defaultValue={1}
             />
           </label>
-        </div>
-        <div className="container">
-          <div {...getRootProps({ style })}>
-            <input {...getInputProps()} />
-            <p>Drag 'n' drop some files here, or click to select files</p>
-          </div>
         </div>
       </div>
     </>
