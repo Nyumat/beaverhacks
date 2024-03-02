@@ -7,14 +7,12 @@ export default function Home() {
     <>
       <NavigationBar />
       <main className="flex flex-col items-center p-12">
-        <h4 className="my-12 max-w-xl text-center font-semibold text-gray-200 md:my-0 md:mb-12">
+        <h4 className="my-12 max-w-xl text-center text-lg font-semibold text-gray-200 md:my-0 md:mb-12">
           Welcome to BeatBytes
         </h4>
         <div className="mx-auto flex w-full flex-row justify-center space-y-4">
-          <h1 className="max-w-5xl text-center text-4xl font-semibold lg:text-8xl">
-            <h1 className="max-w-5xl text-center text-4xl font-semibold lg:text-6xl">
-              The
-            </h1>
+          <h1 className="max-w-5xl text-center text-3xl font-semibold md:text-6xl lg:text-8xl">
+            The
             <motion.span
               className="whitespace-nowrap bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.2rem_#a855f7]"
               initial={{ opacity: 0 }}
@@ -46,9 +44,9 @@ export default function Home() {
             </motion.span>
           </h1>
         </div>
-        <p className="mt-14 max-w-xl text-center text-lg lg:text-2xl">
-          Create, share, and collaborate on custom beats and melodies all in one
-          place.
+        <p className="mt-14 max-w-sm text-center text-sm md:max-w-lg md:text-xl lg:max-w-xl lg:text-2xl">
+          Create, share, and collaborate on custom beats and melodies, all in
+          one place.
         </p>
       </main>
     </>
