@@ -17,7 +17,7 @@ export default async function NavigationBar() {
           className="inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-8 text-2xl"
           title="BeatBytes"
         >
-          <Drum className="size-8 text-[#6c9a23] dark:text-[#A3E635]" />
+          <Drum className="size-8 text-[#6c9a23] dark:text-[#A3E635] mr-2" />
           <h1 className="font-bold text-neutral-950 dark:text-white">
             BeatBytes
           </h1>
@@ -34,8 +34,8 @@ export default async function NavigationBar() {
             {user ? (
               <>
                 <li className="text-lg">
-                  <Link href="/dashboard" title="Dashboard">
-                    Dashboard
+                  <Link href="/sequencer" title="sequencer">
+                    Sequencer
                   </Link>
                 </li>
                 <li
@@ -48,7 +48,7 @@ export default async function NavigationBar() {
             ) : (
               <>
                 <li className="text-lg" title="Sequencer">
-                  <SignInButton mode="modal" afterSignInUrl="/sequencer" />
+                  <SignInButton mode="modal" afterSignInUrl="/" />
                 </li>
 
                 <li className="text-lg" title="Sign Up">
@@ -65,13 +65,22 @@ export default async function NavigationBar() {
               <ThemeToggle />
             </li>
             {user ? (
-              <li className="text-lg" title="Sequencer">
-                <Link href="/sequencer">Sequencer</Link>
-              </li>
+              <>
+                <li className="text-lg" title="Sequencer">
+                  <Link href="/sequencer">Go To Sequencer</Link>
+                </li>
+
+                <li
+                  className="text-lg"
+                  title={user.firstName ?? user.username ?? "Your User"}
+                >
+                  <UserButton afterSignOutUrl="/" />
+                </li>
+              </>
             ) : (
               <>
-                <li className="text-lg" title="Dashboard">
-                  <SignInButton mode="modal" afterSignInUrl="/sequencer" />
+                <li className="text-lg" title="Sequencer">
+                  <SignInButton mode="modal" afterSignInUrl="/" />
                 </li>
 
                 <li className="text-lg" title="Sign Up">
