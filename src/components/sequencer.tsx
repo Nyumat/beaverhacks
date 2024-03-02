@@ -1,19 +1,20 @@
-'use client';
+"use client";
 
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { Reorder } from 'framer-motion';
-import { InfoIcon, PlusIcon, TrashIcon } from 'lucide-react';
-import React from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Toaster } from '@/components/ui/toaster';
-import SequencerCommand from './sequencer-command';
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { Reorder } from "framer-motion";
+import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
+import React from "react";
+import { useDropzone } from "react-dropzone";
+import { Toaster } from "@/components/ui/toaster";
+import SequencerCommand from "./sequencer-command";
+import { Slider } from "@/components/ui/slider";
 
-import { SequencerMenu } from './sequencer-menu';
+import { SequencerMenu } from "./sequencer-menu";
 
-import * as Tone from 'tone';
-import { useToast } from './ui/use-toast';
-const NOTE = 'C2';
+import * as Tone from "tone";
+import { useToast } from "./ui/use-toast";
+const NOTE = "C2";
 
 type Track = {
   id: number;
@@ -46,11 +47,11 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     setSampleState((prev) => {
       const formatedAcceptedFiles = acceptedFiles.map((file) => {
         const url = URL.createObjectURL(file);
-        const name = file.name.split('.');
+        const name = file.name.split(".");
         name.pop();
         return {
           url,
-          name: name.join(''),
+          name: name.join(""),
         };
       });
       return [...prev, ...formatedAcceptedFiles];
@@ -58,12 +59,12 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   }, []);
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ onDrop, maxSize: 41943040, accept: { 'audio/wav': [] } });
+    useDropzone({ onDrop, maxSize: 41943040, accept: { "audio/wav": [] } });
 
   const { toast } = useToast();
 
   const handleStartClick = React.useCallback(async () => {
-    if (Tone.Transport.state === 'started') {
+    if (Tone.Transport.state === "started") {
       Tone.Transport.pause();
       setIsPlaying(false);
     } else {
@@ -96,15 +97,15 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         numOfSteps: numOfSteps,
         checkedSteps: checkedSteps,
       };
-      localStorage.setItem('data', JSON.stringify(data));
+      localStorage.setItem("data", JSON.stringify(data));
       toast({
-        title: 'Session Saved!',
+        title: "Session Saved!",
       });
     } catch (err) {
       toast({
-        title: 'Uh Oh! Something went wrong.',
-        description: 'There was an error saving your session',
-        variant: 'destructive',
+        title: "Uh Oh! Something went wrong.",
+        description: "There was an error saving your session",
+        variant: "destructive",
       });
       console.error(err);
     }
@@ -112,34 +113,34 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   const handleClearSessionClick = React.useCallback(async () => {
     try {
-      localStorage.removeItem('data');
+      localStorage.removeItem("data");
       toast({
-        title: 'Session Deleted!',
+        title: "Session Deleted!",
       });
     } catch (err) {
       toast({
-        title: 'Uh Oh! Something went wrong.',
-        description: 'There was an error clearing your session',
-        variant: 'destructive',
+        title: "Uh Oh! Something went wrong.",
+        description: "There was an error clearing your session",
+        variant: "destructive",
       });
       console.error(err);
     }
   }, [toast]);
 
   React.useEffect(() => {
-    const data = localStorage.getItem('data');
+    const data = localStorage.getItem("data");
     if (data) {
       const parsedData = JSON.parse(data);
 
       const samplesWithBlobUrls = parsedData.samples.map(
         ({ data: base64Data, name }: { data: string; name: string }) => {
-          const byteCharacters = atob(base64Data.split(',')[1]);
+          const byteCharacters = atob(base64Data.split(",")[1]);
           const byteNumbers = new Array(byteCharacters.length);
           for (let i = 0; i < byteCharacters.length; i++) {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
           }
           const byteArray = new Uint8Array(byteNumbers);
-          const fileBlob = new Blob([byteArray], { type: 'audio/mp3' });
+          const fileBlob = new Blob([byteArray], { type: "audio/mp3" });
 
           const blobUrl = URL.createObjectURL(fileBlob);
 
@@ -161,7 +162,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       seqRef.current.callback = (time, step) => {
         setCurrentStep(step);
         tracksRef.current.map((trk) => {
-          const id = trk.id + '-' + step;
+          const id = trk.id + "-" + step;
           if (checkedSteps.includes(id)) {
             trk.sampler.triggerAttack(NOTE, time);
           }
@@ -222,7 +223,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         });
       },
       [...stepIds],
-      '16n'
+      "16n"
     );
     seqRef.current.start(0);
 
@@ -252,7 +253,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     });
     setCheckedSteps((prev) => {
       return prev.filter((box) => {
-        const parsedStringArr = box.split('-');
+        const parsedStringArr = box.split("-");
         return !parsedStringArr.includes(index.toString());
       });
     });
@@ -343,7 +344,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 />
                 <div className="mx-auto flex w-2/3 flex-row space-x-2">
                   {stepIds.map((stepId, stepIndex) => {
-                    const id = trackId + '-' + stepId;
+                    const id = trackId + "-" + stepId;
                     const checkedStep = checkedSteps.includes(id) ? id : null;
                     const isCurrentStep = stepId === currentStep && isPlaying;
                     const shade = stepIndex % 4 === 0 ? 600 : 800;
@@ -354,10 +355,10 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                         className={cn(
                           `w-12 h-10 rounded-sm flex items-center justify-center bg-neutral-700 transition-colors duration-100 scale-100 hover:scale-110 cursor-pointer`,
                           {
-                            'bg-green-500': checkedStep,
-                            'bg-purple-500 scale-110 transition-colors duration-100':
+                            "bg-green-500": checkedStep,
+                            "bg-purple-500 scale-110 transition-colors duration-100":
                               isCurrentStep,
-                            'drop-shadow-[0_0_0.4rem_#a855f7]': isCurrentStep,
+                            "drop-shadow-[0_0_0.4rem_#a855f7]": isCurrentStep,
                           }
                         )}
                       >
@@ -387,14 +388,13 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                   })}
                 </div>
                 <label className="flex flex-col items-center">
-                  <input
-                    type="range"
+                  <Slider
                     className="w-36 rounded-full"
                     min={0}
                     max={10}
                     step={0.1}
                     onChange={(e) => handleTrackVolumeChange(e, trackId)}
-                    defaultValue={5}
+                    defaultValue={[5]}
                   />
                 </label>
               </Reorder.Item>
@@ -443,24 +443,22 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </button> */}
           <label className="col-span-2 flex flex-col items-center">
             <span>BPM</span>
-            <input
-              type="range"
+            <Slider
               min={30}
               max={300}
               step={1}
               onChange={handleBpmChange}
-              defaultValue={120}
+              defaultValue={[120]}
             />
           </label>
           <label className="col-span-2 flex flex-col items-center">
             <span>Volume</span>
-            <input
-              type="range"
+            <Slider
               min={0}
               max={1}
               step={0.01}
               onChange={handleVolumeChange}
-              defaultValue={1}
+              defaultValue={[33]}
             />
           </label>
         </div>
