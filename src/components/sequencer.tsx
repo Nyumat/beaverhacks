@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import React, { useEffect } from "react";
-import * as Tone from "tone";
-const NOTE = "C2";
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { Reorder } from 'framer-motion';
+import React, { useEffect } from 'react';
+import * as Tone from 'tone';
+const NOTE = 'C2';
 
 type Track = {
   id: number;
@@ -26,11 +27,13 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const stepsRef = React.useRef<HTMLInputElement[][]>([[]]);
   const lampsRef = React.useRef<HTMLInputElement[]>([]);
   const seqRef = React.useRef<Tone.Sequence | null>(null);
-  const trackIds = [...Array(samples.length).keys()] as const;
+  const [trackIds, setTrackIds] = React.useState([
+    ...Array(samples.length).keys(),
+  ]);
   const stepIds = [...Array(numOfSteps).keys()] as const;
 
   const handleStartClick = async () => {
-    if (Tone.Transport.state === "started") {
+    if (Tone.Transport.state === 'started') {
       Tone.Transport.pause();
       setIsPlaying(false);
     } else {
@@ -46,11 +49,11 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       numOfSteps: numOfSteps,
       checkedSteps: checkedSteps,
     };
-    localStorage.setItem("data", JSON.stringify(data));
+    localStorage.setItem('data', JSON.stringify(data));
   };
 
   useEffect(() => {
-    const data = localStorage.getItem("data");
+    const data = localStorage.getItem('data');
     if (data) {
       const parsedData = JSON.parse(data);
       setCheckedSteps(parsedData.checkedSteps);
@@ -62,7 +65,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       seqRef.current.callback = (time, step) => {
         setCurrentStep(step);
         tracksRef.current.map((trk) => {
-          const id = trk.id + "-" + step;
+          const id = trk.id + '-' + step;
           if (checkedSteps.includes(id)) {
             trk.sampler.triggerAttack(NOTE, time);
           }
@@ -123,7 +126,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         });
       },
       [...stepIds],
-      "16n"
+      '16n'
     );
     seqRef.current.start(0);
 
@@ -154,9 +157,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               </label>
             ))}
           </div>
-          <div className="flex flex-col space-y-2">
+          <Reorder.Group
+            className="flex flex-col space-y-2"
+            values={trackIds}
+            onReorder={setTrackIds}
+          >
             {trackIds.map((trackId) => (
-              <div
+              <Reorder.Item
+                value={trackId}
                 className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle"
                 key={trackId}
               >
@@ -165,7 +173,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 </p>
                 <div className="mx-auto flex w-2/3 flex-row space-x-2">
                   {stepIds.map((stepId, stepIndex) => {
-                    const id = trackId + "-" + stepId;
+                    const id = trackId + '-' + stepId;
                     const checkedStep = checkedSteps.includes(id) ? id : null;
                     const isCurrentStep = stepId === currentStep && isPlaying;
                     const shade = stepIndex % 4 === 0 ? 600 : 800;
@@ -176,10 +184,10 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                         className={cn(
                           `w-12 h-10 rounded-sm flex items-center justify-center bg-neutral-700 transition-colors duration-100 scale-100 hover:scale-110 cursor-pointer`,
                           {
-                            "bg-green-500": checkedStep,
-                            "bg-purple-500 scale-110 transition-colors duration-100":
+                            'bg-green-500': checkedStep,
+                            'bg-purple-500 scale-110 transition-colors duration-100':
                               isCurrentStep,
-                            "drop-shadow-[0_0_0.4rem_#a855f7]": isCurrentStep,
+                            'drop-shadow-[0_0_0.4rem_#a855f7]': isCurrentStep,
                           }
                         )}
                       >
@@ -219,16 +227,16 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                     defaultValue={5}
                   />
                 </label>
-              </div>
+              </Reorder.Item>
             ))}
-          </div>
+          </Reorder.Group>
         </div>
         <div className="grid grid-cols-3 gap-4">
           <button
             onClick={handleStartClick}
             className="h-12 w-36 rounded bg-blue-500 text-white"
           >
-            {isPlaying ? "Pause" : "Start"}
+            {isPlaying ? 'Pause' : 'Start'}
           </button>
           <button
             onClick={handleSaveClick}
