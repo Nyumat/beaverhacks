@@ -45,6 +45,7 @@ const PianoKey = ({ note, playNote }) => {
 };
 
 export default function Home() {
+  //remember to remove setOctave and just display the entire set of keys and octaves as a single scrollable col of keys
   const [octave, setOctave] = useState(4);
   const [synth, setSynth] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
