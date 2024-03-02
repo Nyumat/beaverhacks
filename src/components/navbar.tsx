@@ -13,7 +13,7 @@ export default function NavigationBar() {
   const user = useAuth();
   const userData = useUser();
   return (
-    <header className="fixed top-0 z-50 mx-auto flex w-full flex-row items-center justify-between py-4 md:sticky">
+    <header className="fixed top-0 z-50 mx-auto border-b-[1px] backdrop-blur-sm flex w-full flex-row items-center justify-between py-4 md:sticky">
       <Link href="/" title="Home">
         <h1
           className="inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-6 md:pl-8 md:text-2xl"
