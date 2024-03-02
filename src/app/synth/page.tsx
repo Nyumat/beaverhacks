@@ -65,7 +65,7 @@ const PianoKey = ({ note, playNote, keyName, keyDown }: PianoKeyProps) => {
             : "h-40 w-full bg-white text-black"
         } ${octaveStyles[octave - 4]} rounded-sm border-2 border-solid ${
           isSharp ? "border-black" : "border-neutral-800"
-        } ${keyDown ? "bg-purple-900" : ""}`}
+        } ${keyDown ? "bg-neutral-400" : ""}`}
       >
         <div className="flex flex-col items-center gap-0">
           <span
@@ -125,33 +125,17 @@ export default function Home() {
       {}
     );
 
-    const notesPlaying: { [note: string]: boolean } = {};
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (noteKeyMap[event.key]) {
         const { note } = noteKeyMap[event.key];
-        if (note && synth && !notesPlaying[note]) {
-          synth.triggerAttack(note);
-          notesPlaying[note] = true;
-          setKeysDown((prevKeysDown) => ({ ...prevKeysDown, [note]: true }));
-          if (isRecording) {
-            setRecordedNotes((prevNotes) => [
-              ...prevNotes,
-              { note, time: Tone.now() },
-            ]);
-          }
-        }
+        playNote(note, true);
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
       if (noteKeyMap[event.key]) {
         const { note } = noteKeyMap[event.key];
-        if (note && synth) {
-          synth.triggerRelease(note);
-          notesPlaying[note] = false;
-          setKeysDown((prevKeysDown) => ({ ...prevKeysDown, [note]: false }));
-        }
+        playNote(note, false);
       }
     };
 
@@ -167,8 +151,16 @@ export default function Home() {
   const playNote = (note, isKeyDown) => {
     if (isKeyDown) {
       synth?.triggerAttack(note);
+      setKeysDown((prevKeysDown) => ({ ...prevKeysDown, [note]: true }));
+      if (isRecording) {
+        setRecordedNotes((prevNotes) => [
+          ...prevNotes,
+          { note, time: Tone.now() },
+        ]);
+      }
     } else {
       synth?.triggerRelease(note);
+      setKeysDown((prevKeysDown) => ({ ...prevKeysDown, [note]: false }));
     }
   };
 
