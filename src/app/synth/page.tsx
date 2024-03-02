@@ -146,6 +146,7 @@ export default function Home() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [synth, isRecording, startOctave, octave]);
 
   const playNote = (note, isKeyDown) => {
@@ -240,7 +241,7 @@ export default function Home() {
               value={octave}
               onChange={(e) => setOctave(parseInt(e.target.value))}
               min={1}
-              //   maybe we want to allow more? i dont think the styling will work for that though.
+              //   maybe we want to allow more? i don't think the styling will work for that though.
               max={4}
               className="size-12 w-full text-center"
             />
