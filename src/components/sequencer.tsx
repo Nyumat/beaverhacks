@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Reorder } from 'framer-motion';
 import { PlusIcon } from 'lucide-react';
-import React, { useEffect, useCallback } from 'react';
+import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as Tone from 'tone';
 const NOTE = 'C2';
@@ -16,7 +16,7 @@ type Track = {
 };
 
 type Props = {
-  samples: { url: string; name: string }[];
+  samples: { url: string; name: string | undefined }[];
   numOfSteps?: number;
 };
 
@@ -63,13 +63,15 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const seqRef = React.useRef<Tone.Sequence | null>(null);
   const stepIds = [...Array(numOfSteps).keys()] as const;
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = React.useCallback((acceptedFiles: File[]) => {
     setSampleState((prev) => {
       const formatedAcceptedFiles = acceptedFiles.map((file) => {
         const url = URL.createObjectURL(file);
+        const name = file.name.split('.');
+        name.pop();
         return {
           url,
-          name: file.name,
+          name: name.join(''),
         };
       });
       return [...prev, ...formatedAcceptedFiles];
@@ -99,19 +101,20 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     localStorage.setItem('data', JSON.stringify(data));
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const data = localStorage.getItem('data');
     if (data) {
       const parsedData = JSON.parse(data);
       setCheckedSteps(parsedData.checkedSteps);
+      setSampleState(parsedData.samples);
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setTrackIds([...Array(samplesState.length).keys()]);
   }, [samplesState]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (seqRef.current) {
       seqRef.current.callback = (time, step) => {
         setCurrentStep(step);
