@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Reorder } from 'framer-motion';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon } from 'lucide-react';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Toaster } from '@/components/ui/toaster';
@@ -246,6 +246,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     });
   };
 
+  const removeTrack = (index: number) => {
+    setSampleState((prev) => {
+      const modifiedArr = [...prev];
+      modifiedArr.splice(index, index);
+      return [...modifiedArr];
+    });
+  };
+
   return (
     <>
       <div className="flex flex-col items-center space-y-4">
@@ -270,19 +278,32 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             className="flex flex-col space-y-2"
             values={trackIds}
             onReorder={setTrackIds}
+            as="div"
           >
-            {trackIds.map((trackId) => (
+            {trackIds.map((trackId, index) => (
               <Reorder.Item
                 value={trackId}
-                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle"
+                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle relative"
                 key={trackId}
+                as="div"
               >
+                {samplesState[trackId]
+                  ? samplesState[trackId].url?.includes('blob:') && (
+                      <TrashIcon
+                        onClick={() => removeTrack(index)}
+                        className="absolute -left-11"
+                      />
+                    )
+                  : undefined}
                 <Input
                   className="mr-2  whitespace-nowrap text-white cursor-text w-32"
-                  value={samplesState[trackId].name}
+                  value={
+                    samplesState[trackId]
+                      ? samplesState[trackId].name
+                      : undefined
+                  }
                   onChange={(e) => handleRename(e, trackId)}
                 />
-
                 <div className="mx-auto flex w-2/3 flex-row space-x-2">
                   {stepIds.map((stepId, stepIndex) => {
                     const id = trackId + '-' + stepId;
