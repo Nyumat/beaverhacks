@@ -64,9 +64,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
     // Punch-Ins
     const bpmMultiplier = React.useRef<Number>(1);
-    const [instrumentFx, setInstrumentFx] = React.useState<Effect<any> | null>(
-        null
-    );
+    const [fxList, setfxList] = React.useState<Tone.InputNode[]>([]);
 
     const tracksRef = React.useRef<Track[]>([]);
     const stepsRef = React.useRef<HTMLInputElement[][]>([[]]);
@@ -240,15 +238,15 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
     React.useEffect(() => {
         tracksRef.current.forEach((track) => {
-            if (instrumentFx) {
+            if (fxList.length > 0) {
                 track.sampler.disconnect();
-                track.sampler.chain(instrumentFx, track.volume);
+                track.sampler.chain(...fxList, track.volume);
             } else {
                 track.sampler.disconnect();
                 track.sampler.chain(track.volume);
             }
         });
-    }, [instrumentFx]);
+    }, [fxList]);
 
     const style = React.useMemo(
         () => ({
@@ -486,17 +484,28 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                         />
                     </label>
                 </div>
-                <div className="">
+                <div className="grid grid-cols-4 gap-4">
                     <button
                         onMouseDown={() => {
-                            setInstrumentFx(new Tone.Reverb());
+                            setfxList([new Tone.Reverb()]);
                         }}
                         onMouseUp={() => {
-                            setInstrumentFx(null);
+                            setfxList([]);
                         }}
                         className="h-12 w-36 rounded bg-purple-500 text-white active:bg-purple-700"
                     >
-                        Slow + Reverb
+                        Reverb
+                    </button>
+                    <button
+                        onMouseDown={() => {
+                            setfxList([new Tone.BitCrusher()]);
+                        }}
+                        onMouseUp={() => {
+                            setfxList([]);
+                        }}
+                        className="h-12 w-36 rounded bg-purple-500 text-white active:bg-purple-700"
+                    >
+                        Crush
                     </button>
                 </div>
                 <Toaster />
