@@ -3,7 +3,8 @@
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Reorder } from 'framer-motion';
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import Dropzone, { useDropzone } from 'react-dropzone';
 import * as Tone from 'tone';
 const NOTE = 'C2';
 
@@ -18,19 +19,68 @@ type Props = {
   numOfSteps?: number;
 };
 
+const baseStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '20px',
+  borderWidth: 2,
+  borderRadius: 2,
+  borderColor: 'border-neutral-800',
+  borderStyle: 'dashed',
+  cursor: 'pointer',
+  backgroundColor: '#404040',
+  color: 'white',
+  transition: 'border .24s ease-in-out',
+};
+
+const focusedStyle = {
+  borderColor: '#22c55e',
+};
+
+const acceptStyle = {
+  borderColor: '#00e676',
+};
+
+const rejectStyle = {
+  borderColor: '#ff1744',
+};
+
 export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [checkedSteps, setCheckedSteps] = React.useState([] as string[]);
   const [currentStep, setCurrentStep] = React.useState(0);
+  const [samplesState, setSampleState] = React.useState(samples);
+  const [trackIds, setTrackIds] = React.useState([
+    ...Array(samples.length).keys(),
+  ]);
 
   const tracksRef = React.useRef<Track[]>([]);
   const stepsRef = React.useRef<HTMLInputElement[][]>([[]]);
   const lampsRef = React.useRef<HTMLInputElement[]>([]);
   const seqRef = React.useRef<Tone.Sequence | null>(null);
-  const [trackIds, setTrackIds] = React.useState([
-    ...Array(samples.length).keys(),
-  ]);
   const stepIds = [...Array(numOfSteps).keys()] as const;
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    console.log(acceptedFiles);
+    setSampleState((prev) => {
+      const formatedAcceptedFiles = acceptedFiles.map((file) => {
+        const url = URL.createObjectURL(file);
+        return {
+          url,
+          name: file.name,
+        };
+      });
+      return [...prev, ...formatedAcceptedFiles];
+    });
+    setTrackIds((prev) => {
+      return [...prev, prev.length];
+    });
+  }, []);
+
+  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
+    useDropzone({ onDrop, accept: { 'audio/wav': [] } });
 
   const handleStartClick = async () => {
     if (Tone.Transport.state === 'started') {
@@ -45,7 +95,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   const handleSaveClick = async () => {
     const data = {
-      samples: samples,
+      samples: samplesState,
       numOfSteps: numOfSteps,
       checkedSteps: checkedSteps,
     };
@@ -102,7 +152,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   };
 
   React.useEffect(() => {
-    tracksRef.current = samples.map((sample, i) => {
+    tracksRef.current = samplesState.map((sample, i) => {
       const volume = new Tone.Volume(0).toDestination();
       const sampler = new Tone.Sampler({
         urls: {
@@ -135,7 +185,25 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       tracksRef.current.map((trk) => void trk.sampler.dispose());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [samples, numOfSteps]);
+  }, [samplesState, numOfSteps]);
+
+  const style = React.useMemo(
+    () => ({
+      ...baseStyle,
+      ...(isFocused ? focusedStyle : {}),
+      ...(isDragAccept ? acceptStyle : {}),
+      ...(isDragReject ? rejectStyle : {}),
+    }),
+    [isFocused, isDragAccept, isDragReject]
+  );
+
+  const handleRename = (e, trackId) => {
+    setSampleState((prev) => {
+      const mutatedPrev = [...prev];
+      mutatedPrev[trackId].name = e.target.value;
+      return mutatedPrev;
+    });
+  };
 
   return (
     <>
@@ -168,9 +236,12 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle"
                 key={trackId}
               >
-                <p className="mr-2 w-full whitespace-nowrap text-right text-white">
-                  {samples[trackId].name}
-                </p>
+                <Input
+                  className="mr-2  whitespace-nowrap text-white cursor-text w-32"
+                  value={samplesState[trackId].name}
+                  onChange={(e) => handleRename(e, trackId)}
+                />
+
                 <div className="mx-auto flex w-2/3 flex-row space-x-2">
                   {stepIds.map((stepId, stepIndex) => {
                     const id = trackId + '-' + stepId;
@@ -272,6 +343,12 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               defaultValue={1}
             />
           </label>
+        </div>
+        <div className="container">
+          <div {...getRootProps({ style })}>
+            <input {...getInputProps()} />
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          </div>
         </div>
       </div>
     </>

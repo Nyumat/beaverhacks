@@ -1,8 +1,9 @@
 'use client';
 
+import SidebarNav from '@/components/sidebar-nav';
 import ProtectedLayout from '../layouts/ProtectecLayout';
 
-export default function DashboardLayout({
+export default function SynthLayout({
   children,
 }: {
   children: React.ReactNode;
