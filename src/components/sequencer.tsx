@@ -74,9 +74,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       });
       return [...prev, ...formatedAcceptedFiles];
     });
-    setTrackIds((prev) => {
-      return [...prev, prev.length];
-    });
   }, []);
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
@@ -109,6 +106,10 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       setCheckedSteps(parsedData.checkedSteps);
     }
   }, []);
+
+  useEffect(() => {
+    setTrackIds([...Array(samplesState.length).keys()]);
+  }, [samplesState]);
 
   useEffect(() => {
     if (seqRef.current) {
