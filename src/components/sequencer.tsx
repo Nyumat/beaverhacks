@@ -26,33 +26,6 @@ type Props = {
   numOfSteps?: number;
 };
 
-const baseStyle = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '20px',
-  borderWidth: 2,
-  borderRadius: 2,
-  borderColor: 'border-neutral-800',
-  borderStyle: 'dashed',
-  cursor: 'pointer',
-  color: '#f7fff0',
-  transition: 'border .24s ease-in-out',
-};
-
-const focusedStyle = {
-  borderColor: '#99c8ff',
-};
-
-const acceptStyle = {
-  borderColor: '#00e676',
-};
-
-const rejectStyle = {
-  borderColor: '#ff1744',
-};
-
 export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [checkedSteps, setCheckedSteps] = React.useState([] as string[]);
@@ -260,16 +233,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [samplesState, numOfSteps]);
 
-  const style = React.useMemo(
-    () => ({
-      ...baseStyle,
-      ...(isFocused ? focusedStyle : {}),
-      ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {}),
-    }),
-    [isFocused, isDragAccept, isDragReject]
-  );
-
   const handleRename = (
     e: React.ChangeEvent<HTMLInputElement>,
     trackId: number
@@ -431,9 +394,8 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </Reorder.Group>
           <div className="w-full">
             <div
-              className="container mt-10 w-full"
-              // @ts-expect-error
-              {...getRootProps({ style })}
+              className="container mt-10 w-full border-gray-700 border-2 p-5 rounded-md border-dashed flex justify-center"
+              {...getRootProps()}
             >
               <input {...getInputProps()} />
               <div className="flex gap-3">
