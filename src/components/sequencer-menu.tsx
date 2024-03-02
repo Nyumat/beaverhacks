@@ -25,11 +25,14 @@ export function SequencerMenu({
   setIsLayoutUnlocked,
   isLayoutUnlocked,
 }: props) {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'p' && (e.metaKey || e.ctrlKey) && e.altKey) {
         e.preventDefault();
         handleStartClick();
+        setIsPlaying((prev) => !prev);
       }
       if (e.key === 's' && (e.metaKey || e.ctrlKey) && e.altKey) {
         e.preventDefault();
@@ -61,8 +64,14 @@ export function SequencerMenu({
       <MenubarMenu>
         <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem onSelect={handleStartClick}>
-            Play <MenubarShortcut>⌘ alt P</MenubarShortcut>
+          <MenubarItem
+            onSelect={() => {
+              handleStartClick();
+              setIsPlaying((prev) => !prev);
+            }}
+          >
+            {isPlaying ? 'Stop' : 'Play'}{' '}
+            <MenubarShortcut>⌘ alt P</MenubarShortcut>
           </MenubarItem>
           <MenubarItem onSelect={handleSaveClick}>
             Save Session <MenubarShortcut>⌘ alt S</MenubarShortcut>
