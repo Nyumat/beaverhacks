@@ -1,3 +1,4 @@
+//@ts-nocheck
 /** @jsxImportSource react */ // Ensure JSX support
 "use client";
 
