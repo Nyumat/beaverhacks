@@ -1,5 +1,4 @@
-"use client";
-
+'use client';
 
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -10,9 +9,11 @@ import { useDropzone } from 'react-dropzone';
 import { Toaster } from '@/components/ui/toaster';
 import SequencerCommand from './sequencer-command';
 
-import * as Tone from "tone";
-import { useToast } from "./ui/use-toast";
-const NOTE = "C2";
+import { SequencerMenu } from './sequencer-menu';
+
+import * as Tone from 'tone';
+import { useToast } from './ui/use-toast';
+const NOTE = 'C2';
 
 type Track = {
   id: number;
@@ -27,30 +28,30 @@ type Props = {
 
 const baseStyle = {
   flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  padding: "20px",
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '20px',
   borderWidth: 2,
   borderRadius: 2,
-  borderColor: "border-neutral-800",
-  borderStyle: "dashed",
-  cursor: "pointer",
-  backgroundColor: "#404040",
-  color: "#f7fff0",
-  transition: "border .24s ease-in-out",
+  borderColor: 'border-neutral-800',
+  borderStyle: 'dashed',
+  cursor: 'pointer',
+  backgroundColor: '#404040',
+  color: '#f7fff0',
+  transition: 'border .24s ease-in-out',
 };
 
 const focusedStyle = {
-  borderColor: "#99c8ff",
+  borderColor: '#99c8ff',
 };
 
 const acceptStyle = {
-  borderColor: "#00e676",
+  borderColor: '#00e676',
 };
 
 const rejectStyle = {
-  borderColor: "#ff1744",
+  borderColor: '#ff1744',
 };
 
 export function Sequencer({ samples, numOfSteps = 16 }: Props) {
@@ -61,6 +62,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const [trackIds, setTrackIds] = React.useState([
     ...Array(samples.length).keys(),
   ]);
+  const [isLayoutUnlocked, setIsLayoutUnlocked] = React.useState(false);
 
   const tracksRef = React.useRef<Track[]>([]);
   const stepsRef = React.useRef<HTMLInputElement[][]>([[]]);
@@ -72,11 +74,11 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     setSampleState((prev) => {
       const formatedAcceptedFiles = acceptedFiles.map((file) => {
         const url = URL.createObjectURL(file);
-        const name = file.name.split(".");
+        const name = file.name.split('.');
         name.pop();
         return {
           url,
-          name: name.join(""),
+          name: name.join(''),
         };
       });
       return [...prev, ...formatedAcceptedFiles];
@@ -84,12 +86,12 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   }, []);
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ onDrop, accept: { "audio/wav": [] } });
+    useDropzone({ onDrop, accept: { 'audio/wav': [] } });
 
   const { toast } = useToast();
 
-  const handleStartClick = async () => {
-    if (Tone.Transport.state === "started") {
+  const handleStartClick = React.useCallback(async () => {
+    if (Tone.Transport.state === 'started') {
       Tone.Transport.pause();
       setIsPlaying(false);
     } else {
@@ -97,7 +99,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       Tone.Transport.start();
       setIsPlaying(true);
     }
-  };
+  }, [setIsPlaying]);
 
   const handleSaveClick = React.useCallback(async () => {
     try {
@@ -106,15 +108,15 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         numOfSteps: numOfSteps,
         checkedSteps: checkedSteps,
       };
-      localStorage.setItem("data", JSON.stringify(data));
+      localStorage.setItem('data', JSON.stringify(data));
       toast({
-        title: "Session Saved!",
+        title: 'Session Saved!',
       });
     } catch (err) {
       toast({
-        title: "Uh Oh! Something went wrong.",
-        description: "There was an error saving your session",
-        variant: "destructive",
+        title: 'Uh Oh! Something went wrong.',
+        description: 'There was an error saving your session',
+        variant: 'destructive',
       });
       console.error(err);
     }
@@ -122,22 +124,22 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   const handleClearSessionClick = React.useCallback(async () => {
     try {
-      localStorage.removeItem("data");
+      localStorage.removeItem('data');
       toast({
-        title: "Session Deleted!",
+        title: 'Session Deleted!',
       });
     } catch (err) {
       toast({
-        title: "Uh Oh! Something went wrong.",
-        description: "There was an error clearing your session",
-        variant: "destructive",
+        title: 'Uh Oh! Something went wrong.',
+        description: 'There was an error clearing your session',
+        variant: 'destructive',
       });
       console.error(err);
     }
   }, [toast]);
 
   React.useEffect(() => {
-    const data = localStorage.getItem("data");
+    const data = localStorage.getItem('data');
     if (data) {
       const parsedData = JSON.parse(data);
       setCheckedSteps(parsedData.checkedSteps);
@@ -154,7 +156,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       seqRef.current.callback = (time, step) => {
         setCurrentStep(step);
         tracksRef.current.map((trk) => {
-          const id = trk.id + "-" + step;
+          const id = trk.id + '-' + step;
           if (checkedSteps.includes(id)) {
             trk.sampler.triggerAttack(NOTE, time);
           }
@@ -181,14 +183,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     );
   };
 
-  const clearSteps = () => {
+  const clearSteps = React.useCallback(() => {
     setCheckedSteps([]);
     stepsRef.current.map((track) => {
       track.map((step) => {
         step.checked = false;
       });
     });
-  };
+  }, [setCheckedSteps, stepsRef]);
 
   React.useEffect(() => {
     tracksRef.current = samplesState.map((sample, i) => {
@@ -215,7 +217,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         });
       },
       [...stepIds],
-      "16n"
+      '16n'
     );
     seqRef.current.start(0);
 
@@ -255,9 +257,25 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     });
   };
 
+  const handleReorder = (newItems) => {
+    if (isLayoutUnlocked) {
+      setTrackIds(newItems);
+    }
+  };
+
   return (
     <>
-      <div className="flex flex-col items-center space-y-4">
+      <div className="flex flex-col items-center justify-start space-y-4">
+        <div className="w-full flex p-3">
+          <SequencerMenu
+            handleStartClick={handleStartClick}
+            handleSaveClick={handleSaveClick}
+            handleClearSessionClick={handleClearSessionClick}
+            clearSteps={clearSteps}
+            setIsLayoutUnlocked={setIsLayoutUnlocked}
+            isLayoutUnlocked={isLayoutUnlocked}
+          />
+        </div>
         <div className="flex flex-col items-center space-y-2">
           <div className="flex flex-row space-x-2">
             {stepIds.map((stepId) => (
@@ -278,7 +296,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           <Reorder.Group
             className="flex flex-col space-y-2"
             values={trackIds}
-            onReorder={setTrackIds}
+            onReorder={handleReorder}
             as="div"
           >
             {trackIds.map((trackId, index) => (
@@ -307,7 +325,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 />
                 <div className="mx-auto flex w-2/3 flex-row space-x-2">
                   {stepIds.map((stepId, stepIndex) => {
-                    const id = trackId + "-" + stepId;
+                    const id = trackId + '-' + stepId;
                     const checkedStep = checkedSteps.includes(id) ? id : null;
                     const isCurrentStep = stepId === currentStep && isPlaying;
                     const shade = stepIndex % 4 === 0 ? 600 : 800;
@@ -318,10 +336,10 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                         className={cn(
                           `w-12 h-10 rounded-sm flex items-center justify-center bg-neutral-700 transition-colors duration-100 scale-100 hover:scale-110 cursor-pointer`,
                           {
-                            "bg-green-500": checkedStep,
-                            "bg-purple-500 scale-110 transition-colors duration-100":
+                            'bg-green-500': checkedStep,
+                            'bg-purple-500 scale-110 transition-colors duration-100':
                               isCurrentStep,
-                            "drop-shadow-[0_0_0.4rem_#a855f7]": isCurrentStep,
+                            'drop-shadow-[0_0_0.4rem_#a855f7]': isCurrentStep,
                           }
                         )}
                       >
@@ -364,7 +382,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          {/* <div className="w-full">
+          <div className="w-full">
             <div
               className="container mt-10 w-full"
               // @ts-expect-error
@@ -379,14 +397,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 </p>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
         <div className="grid grid-cols-4 gap-4">
-          <button
+          {/* <button
             onClick={handleStartClick}
             className="h-12 w-36 rounded bg-blue-500 text-white"
           >
-            {isPlaying ? "Pause" : "Start"}
+            {isPlaying ? 'Pause' : 'Start'}
           </button>
           <button
             onClick={handleSaveClick}
@@ -405,7 +423,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             className="h-12 w-36 rounded bg-red-500 text-white"
           >
             Clear Session
-          </button>
+          </button> */}
           <label className="col-span-2 flex flex-col items-center">
             <span>BPM</span>
             <input

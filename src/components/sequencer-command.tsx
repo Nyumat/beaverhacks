@@ -8,9 +8,9 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/command";
-import { DeleteIcon, SaveIcon, ShareIcon } from "lucide-react";
-import React from "react";
+} from '@/components/ui/command';
+import { DeleteIcon, SaveIcon, ShareIcon } from 'lucide-react';
+import React from 'react';
 
 type Props = {
   toast: any;
@@ -49,28 +49,34 @@ export default function SequencerCommand({
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
-      if (open && e.key === "b" && (e.metaKey || e.ctrlKey) && open) {
+      if (open && e.key === 'b' && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionSave();
       }
-      if (e.key === "q" && (e.metaKey || e.ctrlKey) && open) {
+      if (e.key === 'q' && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionDelete();
       }
-      if (e.key === "z" && (e.metaKey || e.ctrlKey) && open) {
+      if (e.key === 'z' && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionDelete();
       }
     };
 
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [
+    open,
+    setOpen,
+    handleSessionSave,
+    handleSessionDelete,
+    handleSessionDelete,
+  ]);
 
   return (
     <>
