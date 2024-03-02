@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Reorder } from 'framer-motion';
-import { PlusIcon, TrashIcon } from 'lucide-react';
+import { InfoIcon, PlusIcon, TrashIcon } from 'lucide-react';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Toaster } from '@/components/ui/toaster';
@@ -37,7 +37,6 @@ const baseStyle = {
   borderColor: 'border-neutral-800',
   borderStyle: 'dashed',
   cursor: 'pointer',
-  backgroundColor: '#404040',
   color: '#f7fff0',
   transition: 'border .24s ease-in-out',
 };
@@ -86,7 +85,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   }, []);
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ onDrop, accept: { 'audio/wav': [] } });
+    useDropzone({ onDrop, maxSize: 41943040, accept: { 'audio/wav': [] } });
 
   const { toast } = useToast();
 
@@ -103,8 +102,24 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   const handleSaveClick = React.useCallback(async () => {
     try {
+      const samplesBase64 = await Promise.all(
+        samplesState.map(async ({ url, name }) => {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () =>
+              resolve({
+                data: reader.result,
+                name,
+              });
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(blob);
+          });
+        })
+      );
       const data = {
-        samples: samplesState,
+        samples: samplesBase64,
         numOfSteps: numOfSteps,
         checkedSteps: checkedSteps,
       };
@@ -142,14 +157,31 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     const data = localStorage.getItem('data');
     if (data) {
       const parsedData = JSON.parse(data);
+
+      const samplesWithBlobUrls = parsedData.samples.map(
+        ({ data: base64Data, name }) => {
+          const byteCharacters = atob(base64Data.split(',')[1]);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const fileBlob = new Blob([byteArray], { type: 'audio/mp3' });
+
+          const blobUrl = URL.createObjectURL(fileBlob);
+
+          return { url: blobUrl, name };
+        }
+      );
+
       setCheckedSteps(parsedData.checkedSteps);
-      setSampleState(parsedData.samples);
+      setSampleState(samplesWithBlobUrls);
     }
   }, []);
 
   React.useEffect(() => {
     setTrackIds([...Array(samplesState.length).keys()]);
-  }, [samplesState]);
+  }, [samplesState, checkedSteps]);
 
   React.useEffect(() => {
     if (seqRef.current) {
@@ -255,6 +287,12 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       modifiedArr.splice(index, 1);
       return [...modifiedArr];
     });
+    setCheckedSteps((prev) => {
+      return prev.filter((box) => {
+        const parsedStringArr = box.split('-');
+        return !parsedStringArr.includes(index.toString());
+      });
+    });
   };
 
   const handleReorder = (newItems) => {
@@ -302,18 +340,27 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             {trackIds.map((trackId, index) => (
               <Reorder.Item
                 value={trackId}
-                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle relative"
+                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle relative cursor-grab"
                 key={trackId}
                 as="div"
               >
-                {samplesState[trackId]
-                  ? samplesState[trackId].url?.includes('blob:') && (
-                      <TrashIcon
-                        onClick={() => removeTrack(index)}
-                        className="absolute -left-11 cursor-pointer"
-                      />
-                    )
-                  : undefined}
+                {index > 7 && (
+                  <TrashIcon
+                    onClick={() => {
+                      removeTrack(index);
+                      toast({
+                        /** @ts-ignore */
+                        title: (
+                          <div className="flex gap-3">
+                            <InfoIcon />
+                            {samplesState[trackId].name} deleted
+                          </div>
+                        ),
+                      });
+                    }}
+                    className="absolute -left-11 cursor-pointer"
+                  />
+                )}
                 <Input
                   className="mr-2  whitespace-nowrap text-white cursor-text w-32"
                   value={
