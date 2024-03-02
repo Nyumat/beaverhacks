@@ -7,18 +7,20 @@ import {
 import { Drum } from "lucide-react";
 import Link from "next/link";
 import ThemeToggle from "./theme-toggle";
+import { useAuth, useUser } from "@clerk/nextjs";
 
-export default async function NavigationBar() {
-  const user = await currentUser();
+export default function NavigationBar() {
+  const user = useAuth();
+  const userData = useUser();
   return (
-    <header className="fixed top-0 z-50 flex w-full flex-row items-center justify-between bg-neutral-100/10 py-4 dark:bg-neutral-800/10 md:sticky">
+    <header className="fixed top-0 z-50 flex w-full flex-row items-center justify-between py-4 md:sticky mx-auto">
       <Link href="/" title="Home">
         <h1
-          className="inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-8 text-2xl"
+          className="inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-6 md:pl-8 text-md md:text-2xl"
           title="BeatBytes"
         >
-          <Drum className="size-8 text-[#6c9a23] dark:text-[#A3E635] mr-2" />
-          <h1 className="font-bold text-neutral-950 dark:text-white">
+          <Drum className="size-4 md:size-8 text-purple-700 dark:text-purple-700 mr-2 font-light" />
+          <h1 className=" dark:drop-shadow-[0_0_0.3rem_#ffffff70] font-light text-neutral-950 dark:text-white">
             BeatBytes
           </h1>
         </h1>
@@ -31,7 +33,7 @@ export default async function NavigationBar() {
               <ThemeToggle />
             </li>
 
-            {user ? (
+            {user.isSignedIn ? (
               <>
                 <li className="text-lg">
                   <Link href="/sequencer" title="sequencer">
@@ -40,7 +42,7 @@ export default async function NavigationBar() {
                 </li>
                 <li
                   className="text-lg"
-                  title={user.firstName ?? user.username ?? "Your User"}
+                  title={userData.user?.username ?? "Your User"}
                 >
                   <UserButton afterSignOutUrl="/" />
                 </li>
@@ -72,7 +74,7 @@ export default async function NavigationBar() {
 
                 <li
                   className="text-lg"
-                  title={user.firstName ?? user.username ?? "Your User"}
+                  title={userData.user?.username ?? "Your User"}
                 >
                   <UserButton afterSignOutUrl="/" />
                 </li>
