@@ -1,5 +1,5 @@
 "use client";
-import NavigationBar from "@/components/NavBar";
+import NavigationBar from "@/components/navbar";
 import { motion } from "framer-motion";
 
 export default function Home() {
