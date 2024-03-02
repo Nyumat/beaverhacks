@@ -6,7 +6,11 @@ import { Reorder } from 'framer-motion';
 import { PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
+import { Toaster } from '@/components/ui/toaster';
+import SequencerCommand from './sequencer-command';
+
 import * as Tone from 'tone';
+import { useToast } from './ui/use-toast';
 const NOTE = 'C2';
 
 type Track = {
@@ -81,6 +85,8 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({ onDrop, accept: { 'audio/wav': [] } });
 
+  const { toast } = useToast();
+
   const handleStartClick = async () => {
     if (Tone.Transport.state === 'started') {
       Tone.Transport.pause();
@@ -93,12 +99,40 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   };
 
   const handleSaveClick = async () => {
-    const data = {
-      samples: samplesState,
-      numOfSteps: numOfSteps,
-      checkedSteps: checkedSteps,
-    };
-    localStorage.setItem('data', JSON.stringify(data));
+    try {
+      const data = {
+        samples: samplesState,
+        numOfSteps: numOfSteps,
+        checkedSteps: checkedSteps,
+      };
+      localStorage.setItem('data', JSON.stringify(data));
+      toast({
+        title: 'Session Saved!',
+      });
+    } catch (err) {
+      toast({
+        title: 'Uh Oh! Something went wrong.',
+        description: 'There was an error saving your session',
+        variant: 'destructive',
+      });
+      console.error(err);
+    }
+  };
+
+  const handleClearSessionClick = async () => {
+    try {
+      localStorage.removeItem('data');
+      toast({
+        title: 'Session Deleted!',
+      });
+    } catch (err) {
+      toast({
+        title: 'Uh Oh! Something went wrong.',
+        description: 'There was an error clearing your session',
+        variant: 'destructive',
+      });
+      console.error(err);
+    }
   };
 
   React.useEffect(() => {
@@ -321,7 +355,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <button
             onClick={handleStartClick}
             className="h-12 w-36 rounded bg-blue-500 text-white"
@@ -338,9 +372,15 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             onClick={clearSteps}
             className="h-12 w-36 rounded bg-red-500 text-white"
           >
-            Clear
+            Clear Steps
           </button>
-          <label className="flex flex-col items-center">
+          <button
+            onClick={handleClearSessionClick}
+            className="h-12 w-36 rounded bg-red-500 text-white"
+          >
+            Clear Session
+          </button>
+          <label className="flex flex-col items-center col-span-2">
             <span>BPM</span>
             <input
               type="range"
@@ -351,7 +391,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               defaultValue={120}
             />
           </label>
-          <label className="flex flex-col items-center">
+          <label className="flex flex-col items-center col-span-2">
             <span>Volume</span>
             <input
               type="range"
@@ -363,6 +403,8 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             />
           </label>
         </div>
+        <Toaster />
+        <SequencerCommand />
       </div>
     </>
   );
