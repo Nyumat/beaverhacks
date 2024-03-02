@@ -8,9 +8,9 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from '@/components/ui/command';
-import { DeleteIcon, SaveIcon, ShareIcon } from 'lucide-react';
-import React from 'react';
+} from "@/components/ui/command";
+import { DeleteIcon, SaveIcon, ShareIcon } from "lucide-react";
+import React from "react";
 
 type Props = {
   toast: any;
@@ -21,7 +21,7 @@ type Props = {
   handleClearSessionClick: () => void;
 };
 
-export default function sequencorCommand({
+export default function SequencerCommand({
   toast,
   samples,
   numOfSteps,
@@ -49,26 +49,26 @@ export default function sequencorCommand({
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
-      if (open && e.key === 'b' && (e.metaKey || e.ctrlKey) && open) {
+      if (open && e.key === "b" && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionSave();
       }
-      if (e.key === 'q' && (e.metaKey || e.ctrlKey) && open) {
+      if (e.key === "q" && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionDelete();
       }
-      if (e.key === 'z' && (e.metaKey || e.ctrlKey) && open) {
+      if (e.key === "z" && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionDelete();
       }
     };
 
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
   }, [open]);
 
   return (
