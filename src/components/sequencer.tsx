@@ -131,12 +131,13 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       seqRef.current?.dispose();
       tracksRef.current.map((trk) => void trk.sampler.dispose());
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [samples, numOfSteps]);
 
   return (
     <>
       <div className="flex flex-col items-center space-y-4">
-        <div className="flex flex-col space-y-2 items-center">
+        <div className="flex flex-col items-center space-y-2">
           <div className="flex flex-row space-x-2">
             {stepIds.map((stepId) => (
               <label key={stepId} className="hidden">
@@ -155,14 +156,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </div>
           <div className="flex flex-col space-y-2">
             {trackIds.map((trackId) => (
-              <div className="flex flex-row gap-2 justify-center align-middle items-center w-full space-y-2">
-                <p className="text-white w-full whitespace-nowrap text-right mr-2">
+              <div
+                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle"
+                key={trackId}
+              >
+                <p className="mr-2 w-full whitespace-nowrap text-right text-white">
                   {samples[trackId].name}
                 </p>
-                <div
-                  key={trackId}
-                  className="flex flex-row space-x-2 w-2/3 mx-auto"
-                >
+                <div className="mx-auto flex w-2/3 flex-row space-x-2">
                   {stepIds.map((stepId, stepIndex) => {
                     const id = trackId + "-" + stepId;
                     const checkedStep = checkedSteps.includes(id) ? id : null;
@@ -225,19 +226,19 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         <div className="grid grid-cols-3 gap-4">
           <button
             onClick={handleStartClick}
-            className="w-36 h-12 bg-blue-500 text-white rounded"
+            className="h-12 w-36 rounded bg-blue-500 text-white"
           >
             {isPlaying ? "Pause" : "Start"}
           </button>
           <button
             onClick={handleSaveClick}
-            className="w-36 h-12 bg-blue-500 text-white rounded"
+            className="h-12 w-36 rounded bg-blue-500 text-white"
           >
             Save Set
           </button>
           <button
             onClick={clearSteps}
-            className="w-36 h-12 bg-red-500 text-white rounded"
+            className="h-12 w-36 rounded bg-red-500 text-white"
           >
             Clear
           </button>

@@ -14,7 +14,7 @@ export default function SidebarNav() {
   return (
     <div className="flex h-full  flex-col gap-5">
       <div className="flex items-center gap-2">
-        <Music className="size-4 md:size-8 text-purple-700 dark:text-purple-700 mr-2 font-light" />
+        <Music className="mr-2 size-4 font-light text-purple-700 dark:text-purple-700 md:size-8" />
         <h1 className="text-3xl font-medium">BeatBytes</h1>
       </div>
       <nav className="flex flex-1  flex-col gap-2">

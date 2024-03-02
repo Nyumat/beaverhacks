@@ -13,14 +13,14 @@ export default function NavigationBar() {
   const user = useAuth();
   const userData = useUser();
   return (
-    <header className="fixed top-0 z-50 flex w-full flex-row items-center justify-between py-4 md:sticky mx-auto">
+    <header className="fixed top-0 z-50 mx-auto flex w-full flex-row items-center justify-between py-4 md:sticky">
       <Link href="/" title="Home">
         <h1
-          className="inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-6 md:pl-8 text-md md:text-2xl"
+          className="inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-6 md:pl-8 md:text-2xl"
           title="BeatBytes"
         >
-          <Drum className="size-4 md:size-8 text-purple-700 dark:text-purple-700 mr-2 font-light" />
-          <h1 className=" dark:drop-shadow-[0_0_0.3rem_#ffffff70] font-light text-neutral-950 dark:text-white">
+          <Drum className="mr-2 size-4 font-light text-purple-700 dark:text-purple-700 md:size-8" />
+          <h1 className=" font-light text-neutral-950 dark:text-white dark:drop-shadow-[0_0_0.3rem_#ffffff70]">
             BeatBytes
           </h1>
         </h1>

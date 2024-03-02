@@ -36,9 +36,9 @@ const PianoKey = ({ note, playNote }) => {
       onMouseUp={() => playNote(note, false)}
       className={`${
         isSharp
-          ? "w-6 h-20 bg-black rounded-r-md"
-          : "w-32 md:w-44 h-12 bg-white border-2 rounded-r-md"
-      } ${isSharp ? "-ml-3 z-10" : "mr-1"} relative cursor-pointer`}
+          ? "h-20 w-6 rounded-r-md bg-black"
+          : "h-12 w-32 rounded-r-md border-2 bg-white md:w-44"
+      } ${isSharp ? "z-10 -ml-3" : "mr-1"} relative cursor-pointer`}
     >
       {note.replace(/\d/, "")}
     </button>
@@ -57,6 +57,7 @@ export default function Home() {
     setSynth(new Tone.PolySynth(Tone.Synth).toDestination());
 
     return () => synth?.dispose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -131,25 +132,25 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen bg-neutral-900 text-white">
-      <div className="flex flex-row max-w-lg border-r-2 py-2 px-2">
+      <div className="flex max-w-lg flex-row border-r-2 p-2">
         <button
           onClick={startRecording}
           disabled={isRecording || isPlayingBack}
-          className="px-4 py-2 mr-2 h-fit bg-neutral-700 hover:bg-neutral-600 rounded text-lg"
+          className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
         >
-          <div className="w-5 h-5 rounded-full bg-red-500"></div>
+          <div className="size-5 rounded-full bg-red-500"></div>
         </button>
         <button
           onClick={stopRecording}
           disabled={!isRecording}
-          className="px-4 py-2 mr-2 h-fit bg-neutral-700 hover:bg-neutral-600 rounded text-lg"
+          className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
         >
-          <div className="w-5 h-5 rounded-sm bg-neutral-500"></div>
+          <div className="size-5 rounded-sm bg-neutral-500"></div>
         </button>
         <button
           onClick={playBackRecording}
           disabled={isRecording || isPlayingBack || recordedNotes.length === 0}
-          className="px-3 py-1.5 h-fit bg-neutral-700 hover:bg-neutral-600 rounded text-lg"
+          className="h-fit rounded bg-neutral-700 px-3 py-1.5 text-lg hover:bg-neutral-600"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -161,7 +162,7 @@ export default function Home() {
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="lucide lucide-play text-neutral-400"
+            class=" text-neutral-400"
           >
             <polygon points="5 3 19 12 5 21 5 3" />
           </svg>
