@@ -126,9 +126,13 @@ export default function Home() {
     );
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (noteKeyMap[event.key]) {
+      if (noteKeyMap[event.key] && !keysDown[noteKeyMap[event.key].note]) {
         const { note } = noteKeyMap[event.key];
         playNote(note, true);
+        setKeysDown((prevKeysDown) => ({
+          ...prevKeysDown,
+          [noteKeyMap[event.key].note]: true,
+        }));
       }
     };
 
@@ -136,6 +140,10 @@ export default function Home() {
       if (noteKeyMap[event.key]) {
         const { note } = noteKeyMap[event.key];
         playNote(note, false);
+        setKeysDown((prevKeysDown) => ({
+          ...prevKeysDown,
+          [noteKeyMap[event.key].note]: false,
+        }));
       }
     };
 
@@ -146,8 +154,10 @@ export default function Home() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [synth, isRecording, startOctave, octave]);
+    // You need to include keysDown in the dependency array here,
+    // but be cautious as this could cause the effect to run too often.
+    // Consider dependencies carefully to avoid excessive re-renders or effect executions.
+  }, [synth, isRecording, startOctave, octave, keysDown]);
 
   const playNote = (note, isKeyDown) => {
     if (isKeyDown) {
