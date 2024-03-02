@@ -127,6 +127,27 @@ export default function Home() {
             </div>
           </div>
         </motion.span>
+        <div className="h-fit pt-20 pb-12">
+          <div className="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-5xl font-bold tracking-tight text-white sm:text-4xl">
+                Start creating today.
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-xl leading-8 text-gray-300">
+                There is no better time than now to make music, gather some
+                friends and let's get started.
+              </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6">
+                <a
+                  href="/sequencer"
+                  className="rounded-md ring-purple-500 ring-2  px-5 py-3 text-sm font-semibold text-white shadow-sm bg-purple-600 bg-opacity-15 animate-pulse focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400 transition-all"
+                >
+                  Get started
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </>
   );
