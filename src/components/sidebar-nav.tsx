@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { routeConfig } from "@/config/routes";
-import { cn } from "@/lib/utils";
-import { Music } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Icons } from "./icons";
-import ThemeToggle from "./theme-toggle";
+import { routeConfig } from '@/config/routes';
+import { cn } from '@/lib/utils';
+import { Music } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import ThemeToggle from './theme-toggle';
 
 export default function SidebarNav() {
   const pathname = usePathname();
@@ -23,11 +22,11 @@ export default function SidebarNav() {
             <Link
               href={link.href}
               className={cn(
-                "gap-5 py-1 text-sm md:text-lg lg:text-xl xl:text-2xl px-2 rounded-lg flex flex-row transition-colors items-center hover:bg-purple-900",
+                'gap-5 py-1 text-sm md:text-lg lg:text-xl xl:text-2xl px-2 rounded-lg flex flex-row transition-colors items-center hover:bg-purple-900',
                 {
-                  "bg-purple-900/50": pathname === link.href,
-                  "text-gray-900": pathname === link.href,
-                  "hover:bg-purple-900 text-neutral-200":
+                  'bg-purple-900/50': pathname === link.href,
+                  'text-gray-900': pathname === link.href,
+                  'hover:bg-purple-900 text-neutral-200':
                     pathname === link.href,
                 }
               )}
