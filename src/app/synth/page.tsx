@@ -62,10 +62,11 @@ const PianoKey = ({ note, playNote, keyName, keyDown }: PianoKeyProps) => {
         className={`${
           isSharp
             ? "absolute z-10 -mx-8 h-20 w-8 bg-black text-white"
-            : "h-40 w-full bg-white text-black"
-        } ${octaveStyles[octave - 4]} rounded-sm border-2 border-solid ${
-          isSharp ? "border-black" : "border-neutral-800"
-        } ${keyDown ? "bg-neutral-400" : ""}`}
+            : "h-40 w-full text-black"
+        } 
+        ${octaveStyles[octave - 4]} rounded-sm border-2 border-solid 
+        ${isSharp ? "border-black" : "border-neutral-800"} 
+        ${keyDown ? "bg-neutral-400" : isSharp ? "bg-black" : "bg-white"}`}
       >
         <div className="flex flex-col items-center gap-0">
           <span
