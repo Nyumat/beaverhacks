@@ -342,8 +342,12 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          <div className="w-full">
-            <div className="container mt-10 w-full">
+          {/* <div className="w-full">
+            <div
+              className="container mt-10 w-full"
+              // @ts-expect-error
+              {...getRootProps({ style })}
+            >
               <input {...getInputProps()} />
               <div className="flex gap-3">
                 <PlusIcon />
@@ -353,7 +357,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="grid grid-cols-4 gap-4">
           <button

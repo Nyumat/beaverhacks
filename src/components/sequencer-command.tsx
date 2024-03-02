@@ -69,6 +69,7 @@ export default function SequencerCommand({
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   return (
@@ -79,17 +80,17 @@ export default function SequencerCommand({
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Actions">
             <CommandItem onSelect={handleSessionSave}>
-              <SaveIcon className="mr-2 h-4 w-4" />
+              <SaveIcon className="mr-2 size-4" />
               Save Session
               <CommandShortcut>⌘B</CommandShortcut>
             </CommandItem>
             <CommandItem>
-              <ShareIcon className="mr-2 h-4 w-4" />
+              <ShareIcon className="mr-2 size-4" />
               Share Session
               <CommandShortcut>⌘Q</CommandShortcut>
             </CommandItem>
             <CommandItem onSelect={handleSessionDelete}>
-              <DeleteIcon className="mr-2 h-4 w-4" />
+              <DeleteIcon className="mr-2 size-4" />
               Delete Session
               <CommandShortcut>⌘Z</CommandShortcut>
             </CommandItem>
