@@ -7,9 +7,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BeatBytes",
+  title: "BeatBytes - Music Production Made Easy",
   description:
-    "Music production, but you don't even need to leave your browser. Join the fun!",
+    "A music production platform that makes it easy to create and share music with friends.",
   openGraph: {
     images: ["https://beatbytes.vercel.app/og.png"],
   },
