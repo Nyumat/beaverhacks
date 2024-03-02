@@ -23,6 +23,7 @@ type PianoKeyProps = {
   note: string;
   playNote: (note: string, isKeyDown: boolean) => void;
   keyName: string;
+  keyDown: boolean;
 };
 
 const generateNotes = (startOctave: number, numOctaves: number) => {
@@ -39,7 +40,7 @@ const generateNotes = (startOctave: number, numOctaves: number) => {
   return result;
 };
 
-const PianoKey = ({ note, playNote, keyName }: PianoKeyProps) => {
+const PianoKey = ({ note, playNote, keyName, keyDown }: PianoKeyProps) => {
   const isSharp = note.includes("#");
   const octave = parseInt(note.slice(-1));
   const octaveStyles = [
@@ -64,7 +65,7 @@ const PianoKey = ({ note, playNote, keyName }: PianoKeyProps) => {
             : "h-40 w-full bg-white text-black"
         } ${octaveStyles[octave - 4]} rounded-sm border-2 border-solid ${
           isSharp ? "border-black" : "border-neutral-800"
-        }`}
+        } ${keyDown ? "bg-purple-900" : ""}`}
       >
         <div className="flex flex-col items-center gap-0">
           <span
@@ -96,6 +97,7 @@ export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedNotes, setRecordedNotes] = useState([]);
   const [isPlayingBack, setIsPlayingBack] = useState(false);
+  const [keysDown, setKeysDown] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setSynth(new Tone.PolySynth(Tone.Synth).toDestination());
@@ -131,6 +133,7 @@ export default function Home() {
         if (note && synth && !notesPlaying[note]) {
           synth.triggerAttack(note);
           notesPlaying[note] = true;
+          setKeysDown((prevKeysDown) => ({ ...prevKeysDown, [note]: true }));
           if (isRecording) {
             setRecordedNotes((prevNotes) => [
               ...prevNotes,
@@ -147,6 +150,7 @@ export default function Home() {
         if (note && synth) {
           synth.triggerRelease(note);
           notesPlaying[note] = false;
+          setKeysDown((prevKeysDown) => ({ ...prevKeysDown, [note]: false }));
         }
       }
     };
@@ -273,6 +277,7 @@ export default function Home() {
             note={noteObj.note}
             keyName={noteObj.keyName}
             playNote={playNote}
+            keyDown={keysDown[noteObj.note] || false}
           />
         ))}
       </div>
