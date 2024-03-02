@@ -132,7 +132,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       const parsedData = JSON.parse(data);
 
       const samplesWithBlobUrls = parsedData.samples.map(
-        ({ data: base64Data, name }) => {
+        ({ data: base64Data, name }: { data: string; name: string }) => {
           const byteCharacters = atob(base64Data.split(',')[1]);
           const byteNumbers = new Array(byteCharacters.length);
           for (let i = 0; i < byteCharacters.length; i++) {
@@ -154,7 +154,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   React.useEffect(() => {
     setTrackIds([...Array(samplesState.length).keys()]);
-  }, [samplesState, checkedSteps]);
+  }, [samplesState]);
 
   React.useEffect(() => {
     if (seqRef.current) {
@@ -258,9 +258,19 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     });
   };
 
-  const handleReorder = (newItems) => {
+  const handleReorder = (newItems: number[]) => {
     if (isLayoutUnlocked) {
       setTrackIds(newItems);
+    } else {
+      toast({
+        /**@ts-ignore */
+        title: (
+          <div className="flex gap-4">
+            <InfoIcon />
+            Unlock layout before reordering!
+          </div>
+        ),
+      });
     }
   };
 
@@ -307,23 +317,21 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 key={trackId}
                 as="div"
               >
-                {index > 7 && (
-                  <TrashIcon
-                    onClick={() => {
-                      removeTrack(index);
-                      toast({
-                        /** @ts-ignore */
-                        title: (
-                          <div className="flex gap-3">
-                            <InfoIcon />
-                            {samplesState[trackId].name} deleted
-                          </div>
-                        ),
-                      });
-                    }}
-                    className="absolute -left-11 cursor-pointer"
-                  />
-                )}
+                <TrashIcon
+                  onClick={() => {
+                    removeTrack(index);
+                    toast({
+                      /** @ts-ignore */
+                      title: (
+                        <div className="flex gap-3">
+                          <InfoIcon />
+                          {samplesState[trackId].name} deleted
+                        </div>
+                      ),
+                    });
+                  }}
+                  className="absolute -left-11 cursor-pointer"
+                />
                 <Input
                   className="mr-2  whitespace-nowrap text-white cursor-text w-32"
                   value={
