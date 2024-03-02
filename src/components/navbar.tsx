@@ -20,9 +20,9 @@ export default function NavigationBar() {
           title="BeatBytes"
         >
           <Drum className="mr-2 size-4 font-light text-purple-700 dark:text-purple-700 md:size-8" />
-          <h1 className=" font-light text-neutral-950 dark:text-white dark:drop-shadow-[0_0_0.3rem_#ffffff70]">
+          <span className=" font-light text-neutral-950 dark:text-white dark:drop-shadow-[0_0_0.3rem_#ffffff70]">
             BeatBytes
-          </h1>
+          </span>
         </h1>
       </Link>
 
