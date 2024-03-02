@@ -249,7 +249,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const removeTrack = (index: number) => {
     setSampleState((prev) => {
       const modifiedArr = [...prev];
-      modifiedArr.splice(index, index);
+      modifiedArr.splice(index, 1);
       return [...modifiedArr];
     });
   };
@@ -291,7 +291,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                   ? samplesState[trackId].url?.includes('blob:') && (
                       <TrashIcon
                         onClick={() => removeTrack(index)}
-                        className="absolute -left-11"
+                        className="absolute -left-11 cursor-pointer"
                       />
                     )
                   : undefined}
