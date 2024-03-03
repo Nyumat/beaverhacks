@@ -2,30 +2,59 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
-  currentUser,
+  useAuth,
+  useUser,
 } from "@clerk/nextjs";
 import { Drum } from "lucide-react";
 import Link from "next/link";
 import ThemeToggle from "./theme-toggle";
-import { useAuth, useUser } from "@clerk/nextjs";
+
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { navMenuConfig } from "@/config/nav-menu";
+import { cn } from "@/lib/utils";
 
 export default function NavigationBar() {
   const user = useAuth();
   const userData = useUser();
   return (
-    <header className="fixed top-0 z-50 mx-auto border-b-[1px] backdrop-blur-sm flex w-full flex-row items-center justify-between py-4 md:sticky">
-      <Link href="/" title="Home">
-        <h1
-          className="inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-6 md:pl-8 md:text-2xl"
-          title="BeatBytes"
-        >
-          <Drum className="mr-2 size-4 font-light text-purple-700 dark:text-purple-700 md:size-8" />
-          <span className=" font-light text-neutral-950 dark:text-white dark:drop-shadow-[0_0_0.3rem_#ffffff70]">
-            BeatBytes
-          </span>
-        </h1>
-      </Link>
+    <header className="fixed top-0 z-50 mx-auto flex w-full flex-row items-center justify-between border-b-[1px] dark:bg-neutral-950/50 py-4 backdrop-blur-md md:sticky">
+      <div className="flex items-center justify-between gap-1 align-middle">
+        <Link href="/" title="Home">
+          <h1
+            className="mt-1 inline-flex cursor-pointer select-none items-center justify-center gap-1 pl-6 md:pl-8 md:text-2xl"
+            title="BeatBytes"
+          >
+            <Drum className="mr-2 size-4 font-light text-purple-700 dark:text-purple-700 md:size-8" />
+            <span className="font-medium text-purple-600 dark:font-light dark:text-white dark:drop-shadow-sm">
+              BeatBytes
+            </span>
+          </h1>
+        </Link>
 
+        <NavigationMenu className={cn("hidden md:flex ml-4")}>
+          <NavigationMenuList>
+            <NavigationMenuItem className="flex flex-row gap-4">
+              {navMenuConfig.links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "text-lg dark:font-light font-medium text-neutral-950 dark:text-white dark:drop-shadow-[0_0_0.2rem_#6b46c1]",
+                    navigationMenuTriggerStyle
+                  )}
+                >
+                  {link.title}
+                </a>
+              ))}
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
       <div className="">
         <nav className="mx-6 flex items-center justify-center px-6 align-middle md:hidden">
           <ul className="flex flex-row items-center justify-center gap-4">
@@ -66,12 +95,8 @@ export default function NavigationBar() {
             <li>
               <ThemeToggle />
             </li>
-            {user ? (
+            {user.isSignedIn ? (
               <>
-                <li className="text-lg" title="Sequencer">
-                  <Link href="/sequencer">Go To Sequencer</Link>
-                </li>
-
                 <li
                   className="text-lg"
                   title={userData.user?.username ?? "Your User"}

@@ -155,6 +155,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       });
       console.error(err);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
   React.useEffect(() => {
@@ -431,7 +432,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </Reorder.Group>
           <div className="w-full">
             <div
-              className="container mt-10 w-full border-gray-700 border-2 p-5 rounded-md border-dashed flex justify-center"
+              className="container mt-10 flex w-full justify-center rounded-md border-2 border-dashed border-gray-700 p-5"
               {...getRootProps()}
             >
               <input {...getInputProps()} />
