@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,9 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const lampsRef = React.useRef<HTMLInputElement[]>([]);
   const seqRef = React.useRef<Tone.Sequence | null>(null);
   const stepIds = [...Array(numOfSteps).keys()] as const;
+
+  // Sound Effects
+  const [sfxList, setSfxList] = React.useState<Tone.InputNode[]>([]);
 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const sendFile = useMutation(api.files.sendFile);
@@ -233,7 +237,9 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
           }
           const byteArray = new Uint8Array(byteNumbers);
-          const fileBlob = new Blob([byteArray], { type: "audio/mp3" });
+          const fileBlob = new Blob([byteArray], {
+            type: "audio/mp3",
+          });
 
           const blobUrl = URL.createObjectURL(fileBlob);
 
@@ -325,6 +331,19 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [samplesState, numOfSteps]);
+
+  React.useEffect(() => {
+    tracksRef.current.forEach((track) => {
+      if (sfxList.length > 0) {
+        track.sampler.disconnect();
+        track.sampler.chain(...sfxList, track.volume);
+        console.log(sfxList);
+      } else {
+        track.sampler.disconnect();
+        track.sampler.chain(track.volume);
+      }
+    });
+  }, [sfxList]);
 
   const handleRename = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -553,6 +572,60 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               defaultValue={[0.5]}
             />
           </label>
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          <Button
+            onMouseDown={() => {
+              setSfxList([new Tone.PitchShift(6), new Tone.Volume(-10)]);
+            }}
+            onMouseUp={() => {
+              setSfxList([]);
+            }}
+            onMouseLeave={() => {
+              setSfxList([]);
+            }}
+          >
+            Octave Up
+          </Button>
+          <Button
+            onMouseDown={() => {
+              setSfxList([new Tone.PitchShift(-6), new Tone.Reverb()]);
+            }}
+            onMouseUp={() => {
+              setSfxList([]);
+            }}
+            onMouseLeave={() => {
+              setSfxList([]);
+            }}
+          >
+            Octave Down
+          </Button>
+          <Button
+            onMouseDown={() => {
+              setSfxList([new Tone.BitCrusher(), new Tone.Volume(-10)]);
+            }}
+            onMouseUp={() => {
+              setSfxList([]);
+            }}
+            onMouseLeave={() => {
+              setSfxList([]);
+            }}
+          >
+            Crunch
+          </Button>
+          <Button
+            onMouseDown={() => {
+              setSfxList([new Tone.Phaser(), new Tone.Volume(-6)]);
+            }}
+            onMouseUp={() => {
+              setSfxList([]);
+            }}
+            onMouseLeave={() => {
+              setSfxList([]);
+            }}
+          >
+            Phaser
+          </Button>
         </div>
         <Toaster />
         <SequencerCommand
