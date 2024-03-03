@@ -72,12 +72,14 @@ export default function Home() {
             />
           </div>
         </div>
-        <div className="mt-2 flex h-full flex-col items-center justify-center sm:h-screen">
+        <div
+          className="mt-2 flex h-full flex-col items-center justify-center sm:h-screen"
+          id="features"
+        >
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 2.1 }}
-            id="features"
           >
             <div className="mx-auto  w-full py-12 pl-12">
               <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-full lg:grid-cols-2 lg:overflow-x-clip">
@@ -90,9 +92,9 @@ export default function Home() {
                       A better workflow
                     </p>
                     <p className="mt-6 text-lg leading-8 dark:text-gray-200">
-                      BeatBytes a compact, collaborative, music-making computer.
-                      Make any beat or melody you desire by yourself or with
-                      your friends.
+                      BeatBytes is a compact, collaborative, music-making
+                      computer. Make any beat or melody you desire by yourself
+                      or with your friends.
                     </p>
                     <dl className="mt-8 max-w-xl space-y-6 text-base leading-7 dark:text-gray-200 lg:max-w-none">
                       <div className="relative rounded-lg p-2 pl-9 ring-2 ring-opacity-10 transition-all dark:ring-white/10 dark:hover:bg-white dark:hover:bg-opacity-5">

@@ -158,6 +158,7 @@ export default function Home() {
     // You need to include keysDown in the dependency array here,
     // but be cautious as this could cause the effect to run too often.
     // Consider dependencies carefully to avoid excessive re-renders or effect executions.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [synth, isRecording, startOctave, octave, keysDown]);
 
   const playNote = (note, isKeyDown) => {
@@ -207,7 +208,7 @@ export default function Home() {
     <div className="relative flex min-h-screen bg-neutral-900 text-white">
       <div className="min-w-48">
         <div className="fixed top-3.5 h-full">
-          <div className="flex max-w-full flex-col border-r-2 p-2 h-full">
+          <div className="flex h-full max-w-full flex-col border-r-2 p-2">
             <div className="flex flex-row">
               <button
                 onClick={startRecording}
@@ -277,7 +278,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center overflow-visible h-fit">
+      <div className="flex h-fit flex-col justify-center overflow-visible">
         {/* TODO: Don't allow non visualized notes to be played */}
         {generateNotes(startOctave, octave).map((noteObj) => (
           <PianoKey

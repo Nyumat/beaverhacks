@@ -22,7 +22,7 @@ export default function NavigationBar() {
   const user = useAuth();
   const userData = useUser();
   return (
-    <header className="fixed top-0 z-50 mx-auto flex w-full flex-row items-center justify-between border-b-[1px] dark:bg-neutral-950/50 py-4 backdrop-blur-md md:sticky">
+    <header className="fixed top-0 z-50 mx-auto flex w-full flex-row items-center justify-between border-b-[1px] py-4 backdrop-blur-md dark:bg-neutral-950/50 md:sticky">
       <div className="flex items-center justify-between gap-1 align-middle">
         <Link href="/" title="Home">
           <h1
@@ -39,18 +39,26 @@ export default function NavigationBar() {
         <NavigationMenu className={cn("hidden md:flex ml-4")}>
           <NavigationMenuList>
             <NavigationMenuItem className="flex flex-row gap-4">
-              {navMenuConfig.links.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "text-lg dark:font-light font-medium text-neutral-950 dark:text-white dark:drop-shadow-[0_0_0.2rem_#6b46c1]",
-                    navigationMenuTriggerStyle
-                  )}
-                >
-                  {link.title}
-                </a>
-              ))}
+              {navMenuConfig.links.map((link) => {
+                if (
+                  !user.isSignedIn &&
+                  (link.title === "Sequencer" || link.title === "Synthesizer")
+                ) {
+                  return;
+                }
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "text-lg dark:font-light font-medium text-neutral-950 dark:text-white dark:drop-shadow-[0_0_0.2rem_#6b46c1]",
+                      navigationMenuTriggerStyle
+                    )}
+                  >
+                    {link.title}
+                  </a>
+                );
+              })}
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>

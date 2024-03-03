@@ -5,17 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { useMutation } from "convex/react";
 import { Reorder } from "framer-motion";
-import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { InfoIcon, TrashIcon } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
+import { api } from "../../convex/_generated/api";
 import ManageSample from "./sample-manager";
 import SequencerCommand from "./sequencer-command";
 import { SequencerMenu } from "./sequencer-menu";
-import { api } from "../../convex/_generated/api";
-import { useMutation } from "convex/react";
 
+import { Sample } from "@/types";
 import * as Tone from "tone";
+import { TrackActionsDialog } from "./add-track-action";
 import { useToast } from "./ui/use-toast";
 const NOTE = "C2";
 
@@ -36,10 +38,16 @@ const shadeToColor = (shade: string, step: number) => {
   return `bg-${shade}-${shades[index] ?? "500"}`;
 };
 
+type TempTrack = {
+  url: string;
+  name: string;
+};
+
 export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [checkedSteps, setCheckedSteps] = React.useState([] as string[]);
   const [currentStep, setCurrentStep] = React.useState(0);
+  const [tempTrack, setTempTrack] = React.useState<TempTrack[] | null>([]);
   const [samplesState, setSampleState] = React.useState(samples);
   const [trackIds, setTrackIds] = React.useState([
     ...Array(samples.length).keys(),
@@ -53,22 +61,33 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const stepIds = [...Array(numOfSteps).keys()] as const;
 
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
-    setSampleState((prev) => {
-      const formatedAcceptedFiles = acceptedFiles.map((file) => {
-        const url = URL.createObjectURL(file);
-        const name = file.name.split(".");
-        name.pop();
-        return {
-          url,
-          name: name.join(""),
-        };
-      });
-      return [...prev, ...formatedAcceptedFiles];
+    const formattedAcceptedFiles = acceptedFiles.map((file) => {
+      const url = URL.createObjectURL(file);
+      const name = file.name.split(".");
+      name.pop();
+      return {
+        url,
+        name: name.join(""),
+      };
     });
+    setTempTrack(formattedAcceptedFiles);
   }, []);
+
+  const addTrack = (sample: Sample) => {
+    const url = new Blob([sample.url]).toString();
+    const name = sample.name;
+    setSampleState((prev) => [...prev, { url, name }]);
+  };
+
   const createSequenceSession = useMutation(
     api.sequencer.createSequenceSession
   );
+
+  const handleAddTrack = () => {
+    if (tempTrack === null) return;
+    setSampleState((prev) => [...prev, ...tempTrack]);
+    setTempTrack(null);
+  };
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({ onDrop, maxSize: 41943040, accept: { "audio/wav": [] } });
@@ -137,6 +156,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       });
       console.error(err);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [samplesState, numOfSteps, checkedSteps, toast]);
 
   const handleClearSessionClick = React.useCallback(async () => {
@@ -364,7 +384,8 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 />
                 {samplesState[trackId] !== undefined && (
                   <ManageSample
-                    url={"/0/calp.wav"}
+                    key={trackId}
+                    url={samplesState[trackId].url ?? ""}
                     name={samplesState[trackId].name ?? ""}
                     id={trackId.toString()}
                     track={[trackId, index + 1]}
@@ -430,21 +451,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          <div className="w-full">
-            <div
-              className="container mt-10 flex w-full justify-center rounded-md border-2 border-dashed border-gray-700 p-5"
-              {...getRootProps()}
-            >
-              <input {...getInputProps()} />
-              <div className="flex gap-3">
-                <PlusIcon />
-                <p>
-                  Drag &lsquo;n&lsquo; drop some files here, or click to select
-                  files
-                </p>
-              </div>
-            </div>
-          </div>
+          <TrackActionsDialog
+            getRootProps={getRootProps}
+            getInputProps={getInputProps}
+            isDragAccept={isDragAccept}
+            isDragReject={isDragReject}
+            onSampleSave={handleAddTrack}
+            addTrack={addTrack}
+          />
         </div>
         <div className="grid grid-cols-4 gap-4">
           {/* <button
@@ -482,13 +496,13 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             />
           </label>
           <label className="col-span-2 flex flex-col items-center">
-            <span>Volume</span>
+            <span>Master Volume</span>
             <Slider
               min={0}
               max={1}
               step={0.01}
               onChange={handleVolumeChange}
-              defaultValue={[33]}
+              defaultValue={[0.5]}
             />
           </label>
         </div>
