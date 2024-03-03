@@ -381,7 +381,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 />
                 <ManageSample
                   url={"/0/calp.wav"}
-                  name={samplesState[trackId].name ?? ""}
+                  name={samplesState[trackId]?.name ?? ""}
                   id={trackId.toString()}
                   track={[trackId, index + 1]}
                   handleSampleChange={changeSample}
@@ -433,7 +433,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 </div>
                 <label className="flex flex-col items-center">
                   <Slider
-                    className="w-36 rounded-full"
+                    className="w-20 rounded-full"
                     min={0}
                     max={10}
                     step={0.1}
