@@ -1,4 +1,4 @@
-import { DrumIcon, Home, Moon, Piano, Sun } from "lucide-react";
+import { DrumIcon, Home, Moon, Piano, Settings2, Sun } from "lucide-react";
 
 export const Icons = {
   sun: Sun,
@@ -6,4 +6,5 @@ export const Icons = {
   drum: DrumIcon,
   synth: Piano,
   home: Home,
+  settings: Settings2,
 };

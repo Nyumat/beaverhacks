@@ -1,15 +1,16 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+
+import { Slider } from "@/components/ui/slider";
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { Reorder } from "framer-motion";
 import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import { Toaster } from "@/components/ui/toaster";
+import ManageSample from "./sample-manager";
 import SequencerCommand from "./sequencer-command";
-import { Slider } from "@/components/ui/slider";
-
 import { SequencerMenu } from "./sequencer-menu";
 
 import * as Tone from "tone";
@@ -25,6 +26,40 @@ type Track = {
 type Props = {
   samples: { url: string; name: string | undefined }[];
   numOfSteps?: number;
+};
+
+const baseStyle = {
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  padding: "20px",
+  borderWidth: 2,
+  borderRadius: 2,
+  borderColor: "border-neutral-800",
+  borderStyle: "dashed",
+  cursor: "pointer",
+  backgroundColor: "#404040",
+  color: "#f7fff0",
+  transition: "border .24s ease-in-out",
+};
+
+const focusedStyle = {
+  borderColor: "#99c8ff",
+};
+
+const acceptStyle = {
+  borderColor: "#00e676",
+};
+
+const rejectStyle = {
+  borderColor: "#ff1744",
+};
+
+const shadeToColor = (shade: string, step: number) => {
+  const shades = ["800", "700", "600"];
+  const index = Math.floor(step / 3);
+  return `bg-${shade}-${shades[index] ?? "500"}`;
 };
 
 export function Sequencer({ samples, numOfSteps = 16 }: Props) {
@@ -73,6 +108,17 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       setIsPlaying(true);
     }
   }, [setIsPlaying]);
+
+  const changeSample = React.useCallback(
+    (url: string, id: string, track: [number, number]) => {
+      setSampleState((prev) => {
+        const mutatedPrev = [...prev];
+        mutatedPrev[track[0]].url = url;
+        return mutatedPrev;
+      });
+    },
+    []
+  );
 
   const handleSaveClick = React.useCallback(async () => {
     try {
@@ -278,7 +324,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   return (
     <>
       <div className="flex flex-col items-center justify-start space-y-4">
-        <div className="w-full flex p-3">
+        <div className="flex w-full p-3">
           <SequencerMenu
             handleStartClick={handleStartClick}
             handleSaveClick={handleSaveClick}
@@ -314,7 +360,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             {trackIds.map((trackId, index) => (
               <Reorder.Item
                 value={trackId}
-                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle relative cursor-grab"
+                className="relative flex w-full cursor-grab flex-row items-center justify-center gap-2 space-y-2 align-middle"
                 key={trackId}
                 as="div"
               >
@@ -333,32 +379,30 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                   }}
                   className="absolute -left-11 cursor-pointer"
                 />
-                <Input
-                  className="mr-2  whitespace-nowrap text-white cursor-text w-32"
-                  value={
-                    samplesState[trackId]
-                      ? samplesState[trackId].name
-                      : undefined
-                  }
-                  onChange={(e) => handleRename(e, trackId)}
+                <ManageSample
+                  url={"/0/calp.wav"}
+                  name={samplesState[trackId].name ?? ""}
+                  id={trackId.toString()}
+                  track={[trackId, index + 1]}
+                  handleSampleChange={changeSample}
                 />
-                <div className="mx-auto flex w-2/3 flex-row space-x-2">
+                <div className="-my-2 mx-3 flex flex-row gap-0 space-x-[8px]">
                   {stepIds.map((stepId, stepIndex) => {
                     const id = trackId + "-" + stepId;
                     const checkedStep = checkedSteps.includes(id) ? id : null;
                     const isCurrentStep = stepId === currentStep && isPlaying;
-                    const shade = stepIndex % 4 === 0 ? 600 : 800;
-                    // TODO: Figure out why shade not applying
+                    const shade = 800;
                     return (
                       <label
                         key={id}
                         className={cn(
-                          `w-12 h-10 rounded-sm flex items-center justify-center bg-neutral-700 transition-colors duration-100 scale-100 hover:scale-110 cursor-pointer`,
+                          `w-10 h-10 rounded-sm flex items-center justify-center transition-transform duration-75 cursor-default transform bg-neutral-${shade} active:scale-90`,
                           {
                             "bg-green-500": checkedStep,
-                            "bg-purple-500 scale-110 transition-colors duration-100":
+                            "bg-purple-500 scale-110 transition-transform duration-100":
                               isCurrentStep,
                             "drop-shadow-[0_0_0.4rem_#a855f7]": isCurrentStep,
+                            "active:scale-90": true,
                           }
                         )}
                       >
@@ -393,6 +437,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                     min={0}
                     max={10}
                     step={0.1}
+                    // @ts-ignore
                     onChange={(e) => handleTrackVolumeChange(e, trackId)}
                     defaultValue={[5]}
                   />
@@ -402,7 +447,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </Reorder.Group>
           <div className="w-full">
             <div
-              className="container mt-10 w-full border-gray-700 border-2 p-5 rounded-md border-dashed flex justify-center"
+              className="container mt-10 flex w-full justify-center rounded-md border-2 border-dashed border-gray-700 p-5"
               {...getRootProps()}
             >
               <input {...getInputProps()} />
