@@ -1,7 +1,8 @@
+/* eslint-disable tailwindcss/migration-from-tailwind-2 */
 "use client";
 import NavigationBar from "@/components/navbar";
 import { motion } from "framer-motion";
-import { Music, AudioLines, KeyboardMusic, Users } from "lucide-react";
+import { AudioLines, KeyboardMusic, Users } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
@@ -10,7 +11,7 @@ export default function Home() {
       <NavigationBar />
       <main className="flex flex-col items-center p-12">
         <div className="h-screen">
-          <h4 className="my-12 max-w-xl text-center font-semibold text-gray-200 md:my-0 md:mb-12 mx-auto">
+          <h4 className="mx-auto my-12 max-w-xl text-center font-semibold text-gray-200 md:my-0 md:mb-12">
             Welcome to BeatBytes
           </h4>
           <div className="mx-auto flex w-full flex-row justify-center space-y-4">
@@ -49,7 +50,7 @@ export default function Home() {
               </motion.span>
             </h1>
           </div>
-          <p className="mt-14 max-w-xl text-center text-lg lg:text-2xl mx-auto">
+          <p className="mx-auto mt-14 max-w-xl text-center text-lg lg:text-2xl">
             Create, share, and collaborate on custom beats and melodies all in
             one place.
           </p>
@@ -59,23 +60,23 @@ export default function Home() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 2.1 }}
         >
-          <div className="mx-auto max-w-7xl py-8 px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
             <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
               <div className="lg:pr-8 lg:pt-4">
-                <div className="lg:max-w-lg -mt-1">
+                <div className="-mt-1 lg:max-w-lg">
                   <h2 className="text-xl font-semibold leading-7 text-purple-500">
                     Make Music Happen
                   </h2>
                   <p className="mt-2 text-5xl font-bold tracking-tight text-white sm:text-4xl">
                     A better workflow
                   </p>
-                  <p className="mt-6 text-lg leading-8 text-gray-150">
+                  <p className="mt-6 text-lg leading-8 text-gray-200">
                     BeatBytes a compact, collaborative, music-making computer.
                     Make any beat or melody you desire by yourself or with your
                     friends.
                   </p>
-                  <dl className="mt-8 max-w-xl space-y-6 text-base leading-7 text-gray-150 lg:max-w-none">
-                    <div className="relative pl-9 ring-white rounded-lg ring-2 ring-opacity-10 p-2 hover:bg-white hover:bg-opacity-5 transition-all">
+                  <dl className="mt-8 max-w-xl space-y-6 text-base leading-7 text-gray-200 lg:max-w-none">
+                    <div className="relative rounded-lg p-2 pl-9 ring-2 ring-white ring-opacity-10 transition-all hover:bg-white hover:bg-opacity-5">
                       <dt className="inline font-semibold text-white">
                         <AudioLines
                           className="absolute left-1.5 top-2.5 h-6 w-6 text-purple-500"
@@ -88,7 +89,7 @@ export default function Home() {
                         precision.
                       </dd>
                     </div>
-                    <div className="relative pl-9 ring-white rounded-lg ring-2 ring-opacity-10 p-2 hover:bg-white hover:bg-opacity-5 transition-all">
+                    <div className="relative rounded-lg p-2 pl-9 ring-2 ring-white ring-opacity-10 transition-all hover:bg-white hover:bg-opacity-5">
                       <dt className="inline font-semibold">
                         <KeyboardMusic
                           className="absolute left-1.5 top-2.5 h-6 w-6 text-purple-500"
@@ -101,7 +102,7 @@ export default function Home() {
                         interface.
                       </dd>
                     </div>
-                    <div className="relative pl-9 ring-white rounded-lg ring-2 ring-opacity-10 p-2 hover:bg-white hover:bg-opacity-5 transition-all">
+                    <div className="relative rounded-lg p-2 pl-9 ring-2 ring-white ring-opacity-10 transition-all hover:bg-white hover:bg-opacity-5">
                       <dt className="inline font-semibold text-white">
                         <Users
                           className="absolute left-1.5 top-2.5 h-5 w-5 text-purple-500"
@@ -120,27 +121,27 @@ export default function Home() {
               <Image
                 src="/features.png"
                 alt="Product screenshot"
-                className="w-[48rem] shadow-[0_35px_75px_-15px_rgba(90,0,170,0.475)]                max-w-none rounded-lg ring-2 ring-white ring-opacity-10 border-8 border-white border-opacity-5 sm:w-[57rem] md:-ml-4 lg:-ml-0"
+                className="w-[48rem] max-w-none                rounded-lg border-8 border-white border-opacity-5 shadow-[0_35px_75px_-15px_rgba(90,0,170,0.475)] ring-2 ring-white ring-opacity-10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
                 width="2432"
                 height="1442"
               />
             </div>
           </div>
         </motion.span>
-        <div className="h-fit pt-20 pb-12">
+        <div className="h-fit pb-12 pt-20">
           <div className="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-4xl 2xl:text-5xl font-bold tracking-tight text-white">
+              <h2 className="text-4xl font-bold tracking-tight text-white 2xl:text-5xl">
                 Start creating today.
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-xl leading-8 text-gray-300">
                 There is no better time than now to make music, gather some
-                friends and let's get started.
+                friends and let&aspo;s get started.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <a
                   href="/sequencer"
-                  className="rounded-md ring-purple-500 ring-2  px-5 py-3 text-sm font-semibold text-white shadow-sm bg-purple-600 bg-opacity-15 animate-pulse focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400 transition-all"
+                  className="animate-pulse rounded-md bg-purple-600  bg-opacity-15 px-5 py-3 text-sm font-semibold text-white shadow-sm ring-2 ring-purple-500 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400"
                 >
                   Get started
                 </a>
