@@ -19,58 +19,51 @@ export default function Home() {
   return (
     <>
       <NavigationBar />
-      <main className="flex flex-col items-center">
-        <div className="mt-24 flex h-screen flex-col gap-4 md:mt-16 lg:mt-8">
-          <h4 className="pointer-events-none mx-auto mb-6 mt-8 w-fit max-w-xl  select-none rounded-3xl border-[0.5px] bg-gradient-to-r from-purple-500 from-40% via-blue-500 via-50% to-green-500  to-60% bg-clip-text px-4 py-2 text-center font-semibold text-transparent ring-2 ring-neutral-100 ring-opacity-20 dark:ring-neutral-100 dark:ring-opacity-5">
+      <main className="flex flex-col items-center justify-center mt-12 lg:mt-20">
+        <div className="h-screen">
+          <h4 className="my-12 max-w-xl text-center font-semibold text-gray-200 md:my-0 md:mb-12 mx-auto">
             Welcome to BeatBytes
           </h4>
           <div className="mx-auto flex w-full flex-row justify-center space-y-4">
-            <h1 className="xs:scale-[0.6] max-w-3xl scale-[0.8] whitespace-normal text-center text-6xl font-bold md:max-w-5xl md:scale-100 md:text-7xl lg:text-8xl">
+            <h1 className="max-w-5xl text-center text-4xl font-semibold lg:text-8xl">
+              <h1 className="max-w-5xl text-center text-4xl font-semibold lg:text-6xl">
+                The
+              </h1>
               <motion.span
-                className="bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.15rem_#a855f7]"
+                className="whitespace-nowrap bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.2rem_#a855f7]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
               >
-                Accelerate
+                {" "}
+                Ultimate Sequencer
               </motion.span>{" "}
-              Your{" "}
-              <div className="whitespace-nowrap">
-                <motion.span
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.15rem_#4299e1]"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 1 }}
-                >
-                  Music{" "}
-                </motion.span>
-                <motion.span
-                  className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.15rem_#48bb78]"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 1.5 }}
-                >
-                  Production
-                </motion.span>
-              </div>
-              Journey Today.
+              <br />
+              for {""}
+              <motion.span
+                className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.2rem_#4299e1]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 1 }}
+              >
+                Hobbyists
+              </motion.span>
+              {""}
+              <br /> and {""}
+              <motion.span
+                className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.2rem_#48bb78]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 1.5 }}
+              >
+                Professionals
+              </motion.span>
             </h1>
           </div>
-          <p className="mx-auto mt-6 max-w-xs text-center text-xl font-semibold text-neutral-900/70 dark:text-neutral-300/80 md:max-w-md md:text-2xl lg:mt-14 lg:max-w-2xl lg:text-2xl">
-            Create, share, and collaborate on custom beats and melodies,{" "}
-            <span className="bg-gradient-to-r from-purple-500 from-20%  via-blue-500 via-50% to-green-500 to-80% bg-clip-text text-center font-semibold text-transparent md:my-0 md:mb-12">
-              all in one place.
-            </span>
+          <p className="mt-14 max-w-xl text-center text-lg lg:text-2xl mx-auto">
+            Create, share, and collaborate on custom beats and melodies all in
+            one place.
           </p>
-          <div className="mt-12 hidden items-center justify-center lg:flex">
-            <Image
-              src="/synth.png"
-              alt="Synth Screenshot"
-              className="w-[48rem] max-w-none rounded-lg border-8 border-purple-700 border-opacity-5 shadow-[0_35px_75px_-15px_rgba(90,0,170,0.475)] ring-2 ring-opacity-10 dark:ring-purple-500/50 sm:w-[57rem] md:-ml-4 lg:-ml-0"
-              width="2432"
-              height="1442"
-            />
-          </div>
         </div>
         <div
           className="mt-2 flex h-full flex-col items-center justify-center sm:h-screen"
@@ -83,7 +76,7 @@ export default function Home() {
           >
             <div className="mx-auto  w-full py-12 pl-12">
               <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-full lg:grid-cols-2 lg:overflow-x-clip">
-                <div className="mr-10 rounded-2xl border-8 border-purple-700 border-opacity-5 bg-neutral-950/80  px-6 py-2 shadow-[0_35px_75px_-15px_rgba(90,0,170,0.475)] ring-2 ring-purple-500 ring-opacity-10 dark:ring-purple-500/50 lg:ml-10">
+                <div className="mr-12 rounded-2xl border-opacity-5 bg-neutral-950/80  px-2 py-2 lg:ml-10">
                   <div className="lg:max-w-lg ">
                     <h2 className="text-xl font-semibold leading-7 text-purple-500">
                       Make Music Happen
