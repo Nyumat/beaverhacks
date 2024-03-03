@@ -21,9 +21,13 @@ export default function Home() {
       <NavigationBar />
       <main className="flex flex-col items-center justify-center mt-12 lg:mt-20">
         <div className="mt-24 flex h-screen flex-col gap-4 md:mt-16 lg:mt-8">
-          <h4 className="pointer-events-none mx-auto mb-6 mt-8 w-fit max-w-xl  select-none rounded-3xl border-[0.5px] bg-gradient-to-r from-purple-500 from-40% via-blue-500 via-50% to-green-500  to-60% bg-clip-text px-4 py-2 text-center font-semibold text-transparent ring-2 ring-neutral-100 ring-opacity-20 dark:ring-neutral-100 dark:ring-opacity-5">
-            Welcome to BeatBytes
-          </h4>
+          <div className="mx-auto h-fit w-fit rounded-full mb-6 bg-gradient-to-r from-purple-500 via-blue-500 to-green-500 p-0.5 ">
+            <div className="flex h-full w-full items-center justify-center bg-black back rounded-full p-2 px-3">
+              <h1 className="text-base font-medium text-white">
+                Welcome to BeatBytes
+              </h1>
+            </div>
+          </div>
           <div className="mx-auto flex w-full flex-row justify-center space-y-4">
             <h1 className="xs:scale-[0.6] max-w-3xl scale-[0.8] whitespace-normal text-center text-6xl font-bold md:max-w-5xl md:scale-100 md:text-7xl lg:text-8xl">
               <motion.span
