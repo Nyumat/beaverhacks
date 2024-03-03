@@ -36,38 +36,7 @@ export type MenuItem = NavItem & {
   external?: boolean;
 };
 
-export interface TeamCardItem {
-  name: string;
-  role: string;
-  image: string;
-  other?: string;
-  github?: string;
-  linkedin?: string;
-  email?: string;
-  biography?: string;
-}
-
-export type ProjectCardItem = {
-  title: string;
-  description: string;
-  href: string;
-  github?: string;
-  live?: string;
-  images: string[];
-  video: string;
-  tags?: string[];
-};
-
 export type MainNavItem = NavItem;
-
-export type DocsConfig = {
-  mainNav: MainNavItem[];
-  sidebarNav: SidebarNavItem[];
-};
-
-export type MarketingConfig = {
-  mainNav: MainNavItem[];
-};
 
 export type NavMenuConfig = {
   links: MenuItem[];
@@ -78,8 +47,12 @@ export type DashboardConfig = {
   sidebarNav: SidebarNavItem[];
 };
 
-export type SubscriptionPlan = {
+export interface Sample {
+  url: string;
   name: string;
-  description: string;
-  stripePriceId: string;
-};
+}
+
+export interface Category {
+  name: string;
+  samples: Sample[];
+}
