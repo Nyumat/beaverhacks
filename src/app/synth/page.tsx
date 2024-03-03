@@ -205,7 +205,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex min-h-screen bg-neutral-900 text-white">
+    <div className="relative flex min-h-screen bg-black text-white">
       <div className="min-w-48">
         <div className="fixed top-3.5 h-full">
           <div className="flex h-full max-w-full flex-col border-r-2 p-2">
@@ -213,14 +213,14 @@ export default function Home() {
               <button
                 onClick={startRecording}
                 disabled={isRecording || isPlayingBack}
-                className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
+                className="mr-2 h-fit rounded border-[1px] px-4 py-2 text-lg border-neutral-800"
               >
                 <div className="size-5 rounded-full bg-red-500"></div>
               </button>
               <button
                 onClick={stopRecording}
                 disabled={!isRecording}
-                className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
+                className="mr-2 h-fit rounded border-[1px] px-4 py-2 text-lg border-neutral-800"
               >
                 <div className="size-5 rounded-sm bg-neutral-500"></div>
               </button>
@@ -229,7 +229,7 @@ export default function Home() {
                 disabled={
                   isRecording || isPlayingBack || recordedNotes.length === 0
                 }
-                className="h-fit rounded bg-neutral-700 px-3 py-1.5 text-lg hover:bg-neutral-600"
+                className="h-fit rounded border-[1px] px-3 py-1.5 text-lg border-neutral-800"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
