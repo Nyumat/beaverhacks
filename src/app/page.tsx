@@ -20,49 +20,47 @@ export default function Home() {
     <>
       <NavigationBar />
       <main className="flex flex-col items-center justify-center mt-12 lg:mt-20">
-        <div className="h-screen">
-          <h4 className="my-12 max-w-xl text-center font-semibold text-gray-200 md:my-0 md:mb-12 mx-auto">
+        <div className="mt-24 flex h-screen flex-col gap-4 md:mt-16 lg:mt-8">
+          <h4 className="pointer-events-none mx-auto mb-6 mt-8 w-fit max-w-xl  select-none rounded-3xl border-[0.5px] bg-gradient-to-r from-purple-500 from-40% via-blue-500 via-50% to-green-500  to-60% bg-clip-text px-4 py-2 text-center font-semibold text-transparent ring-2 ring-neutral-100 ring-opacity-20 dark:ring-neutral-100 dark:ring-opacity-5">
             Welcome to BeatBytes
           </h4>
           <div className="mx-auto flex w-full flex-row justify-center space-y-4">
-            <h1 className="max-w-5xl text-center text-4xl font-semibold lg:text-8xl">
-              <h1 className="max-w-5xl text-center text-4xl font-semibold lg:text-6xl">
-                The
-              </h1>
+            <h1 className="xs:scale-[0.6] max-w-3xl scale-[0.8] whitespace-normal text-center text-6xl font-bold md:max-w-5xl md:scale-100 md:text-7xl lg:text-8xl">
               <motion.span
-                className="whitespace-nowrap bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.2rem_#a855f7]"
+                className="bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.15rem_#a855f7]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
               >
-                {" "}
-                Ultimate Sequencer
+                Accelerate
               </motion.span>{" "}
-              <br />
-              for {""}
-              <motion.span
-                className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.2rem_#4299e1]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 1 }}
-              >
-                Hobbyists
-              </motion.span>
-              {""}
-              <br /> and {""}
-              <motion.span
-                className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.2rem_#48bb78]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 1.5 }}
-              >
-                Professionals
-              </motion.span>
+              Your{" "}
+              <div className="whitespace-nowrap">
+                <motion.span
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.15rem_#4299e1]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 1 }}
+                >
+                  Music{" "}
+                </motion.span>
+                <motion.span
+                  className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent dark:drop-shadow-[0_0_0.15rem_#48bb78]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 1.5 }}
+                >
+                  Production
+                </motion.span>
+              </div>
+              Journey Today.
             </h1>
           </div>
-          <p className="mt-14 max-w-xl text-center text-lg lg:text-2xl mx-auto">
-            Create, share, and collaborate on custom beats and melodies all in
-            one place.
+          <p className="mx-auto mt-6 max-w-xs text-center text-xl font-semibold text-neutral-900/70 dark:text-neutral-300/80 md:max-w-md md:text-2xl lg:mt-14 lg:max-w-2xl lg:text-2xl">
+            Create, share, and collaborate on custom beats and melodies,{" "}
+            <span className="bg-gradient-to-r from-purple-500 from-20%  via-blue-500 via-50% to-green-500 to-80% bg-clip-text text-center font-semibold text-transparent md:my-0 md:mb-12">
+              all in one place.
+            </span>
           </p>
         </div>
         <div
