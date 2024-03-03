@@ -29,4 +29,9 @@ export default defineSchema({
     text: v.string(),
     isCompleted: v.boolean(),
   }),
+  sessions: defineTable({
+    samples: v.any(),
+    numOfSteps: v.number(),
+    checkedSteps: v.array(v.string()),
+  }),
 });

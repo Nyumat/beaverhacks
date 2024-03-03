@@ -12,6 +12,8 @@ import { useDropzone } from "react-dropzone";
 import ManageSample from "./sample-manager";
 import SequencerCommand from "./sequencer-command";
 import { SequencerMenu } from "./sequencer-menu";
+import { api } from "../../convex/_generated/api";
+import { useMutation } from "convex/react";
 
 import * as Tone from "tone";
 import { useToast } from "./ui/use-toast";
@@ -64,6 +66,9 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       return [...prev, ...formatedAcceptedFiles];
     });
   }, []);
+  const createSequenceSession = useMutation(
+    api.sequencer.createSequenceSession
+  );
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({ onDrop, maxSize: 41943040, accept: { "audio/wav": [] } });
@@ -115,6 +120,11 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         numOfSteps: numOfSteps,
         checkedSteps: checkedSteps,
       };
+
+      const result = await createSequenceSession({ ...data });
+
+      console.log(result);
+
       localStorage.setItem("data", JSON.stringify(data));
       toast({
         title: "Session Saved!",
