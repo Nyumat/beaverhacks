@@ -1,14 +1,18 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Toaster } from "@/components/ui/toaster";
+
 import { cn } from "@/lib/utils";
 import { Reorder } from "framer-motion";
-import { TrashIcon } from "lucide-react";
+import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import ManageSample from "./sample-manager";
+import { Toaster } from "@/components/ui/toaster";
 import SequencerCommand from "./sequencer-command";
+import { Slider } from "@/components/ui/slider";
+import ManageSample from "./sample-manager";
+import { SequencerMenu } from "./sequencer-menu";
+
 
 import * as Tone from "tone";
 import { useToast } from "./ui/use-toast";
@@ -67,6 +71,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const [trackIds, setTrackIds] = React.useState([
     ...Array(samples.length).keys(),
   ]);
+  const [isLayoutUnlocked, setIsLayoutUnlocked] = React.useState(false);
 
   const tracksRef = React.useRef<Track[]>([]);
   const stepsRef = React.useRef<HTMLInputElement[][]>([[]]);
@@ -90,11 +95,11 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   }, []);
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ onDrop, accept: { "audio/wav": [] } });
+    useDropzone({ onDrop, maxSize: 41943040, accept: { "audio/wav": [] } });
 
   const { toast } = useToast();
 
-  const handleStartClick = async () => {
+  const handleStartClick = React.useCallback(async () => {
     if (Tone.Transport.state === "started") {
       Tone.Transport.pause();
       setIsPlaying(false);
@@ -103,7 +108,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       Tone.Transport.start();
       setIsPlaying(true);
     }
-  };
+  }, [setIsPlaying]);
 
   const changeSample = React.useCallback(
     (url: string, id: string, track: [number, number]) => {
@@ -118,8 +123,24 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   const handleSaveClick = React.useCallback(async () => {
     try {
+      const samplesBase64 = await Promise.all(
+        samplesState.map(async ({ url, name }) => {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () =>
+              resolve({
+                data: reader.result,
+                name,
+              });
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(blob);
+          });
+        })
+      );
       const data = {
-        samples: samplesState,
+        samples: samplesBase64,
         numOfSteps: numOfSteps,
         checkedSteps: checkedSteps,
       };
@@ -157,8 +178,25 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     const data = localStorage.getItem("data");
     if (data) {
       const parsedData = JSON.parse(data);
+
+      const samplesWithBlobUrls = parsedData.samples.map(
+        ({ data: base64Data, name }: { data: string; name: string }) => {
+          const byteCharacters = atob(base64Data.split(",")[1]);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const fileBlob = new Blob([byteArray], { type: "audio/mp3" });
+
+          const blobUrl = URL.createObjectURL(fileBlob);
+
+          return { url: blobUrl, name };
+        }
+      );
+
       setCheckedSteps(parsedData.checkedSteps);
-      setSampleState(parsedData.samples);
+      setSampleState(samplesWithBlobUrls);
     }
   }, []);
 
@@ -198,14 +236,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     );
   };
 
-  const clearSteps = () => {
+  const clearSteps = React.useCallback(() => {
     setCheckedSteps([]);
     stepsRef.current.map((track) => {
       track.map((step) => {
         step.checked = false;
       });
     });
-  };
+  }, [setCheckedSteps, stepsRef]);
 
   React.useEffect(() => {
     tracksRef.current = samplesState.map((sample, i) => {
@@ -243,16 +281,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [samplesState, numOfSteps]);
 
-  const style = React.useMemo(
-    () => ({
-      ...baseStyle,
-      ...(isFocused ? focusedStyle : {}),
-      ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {}),
-    }),
-    [isFocused, isDragAccept, isDragReject]
-  );
-
   const handleRename = (
     e: React.ChangeEvent<HTMLInputElement>,
     trackId: number
@@ -270,11 +298,43 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       modifiedArr.splice(index, 1);
       return [...modifiedArr];
     });
+    setCheckedSteps((prev) => {
+      return prev.filter((box) => {
+        const parsedStringArr = box.split("-");
+        return !parsedStringArr.includes(index.toString());
+      });
+    });
+  };
+
+  const handleReorder = (newItems: number[]) => {
+    if (isLayoutUnlocked) {
+      setTrackIds(newItems);
+    } else {
+      toast({
+        /**@ts-ignore */
+        title: (
+          <div className="flex gap-4">
+            <InfoIcon />
+            Unlock layout before reordering!
+          </div>
+        ),
+      });
+    }
   };
 
   return (
     <>
-      <div className="flex flex-col items-center space-y-4">
+      <div className="flex flex-col items-center justify-start space-y-4">
+        <div className="w-full flex p-3">
+          <SequencerMenu
+            handleStartClick={handleStartClick}
+            handleSaveClick={handleSaveClick}
+            handleClearSessionClick={handleClearSessionClick}
+            clearSteps={clearSteps}
+            setIsLayoutUnlocked={setIsLayoutUnlocked}
+            isLayoutUnlocked={isLayoutUnlocked}
+          />
+        </div>
         <div className="flex flex-col items-center space-y-2">
           <div className="flex flex-row space-x-2">
             {stepIds.map((stepId) => (
@@ -295,25 +355,32 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           <Reorder.Group
             className="flex flex-col space-y-2"
             values={trackIds}
-            onReorder={setTrackIds}
+            onReorder={handleReorder}
             as="div"
           >
             {trackIds.map((trackId, index) => (
               <Reorder.Item
                 value={trackId}
-                className="relative flex flex-row items-center justify-center space-y-2"
+                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle relative cursor-grab"
                 key={trackId}
                 as="div"
               >
-                {samplesState[trackId]
-                  ? samplesState[trackId].url?.includes("blob:") && (
-                      <TrashIcon
-                        onClick={() => removeTrack(index)}
-                        className="absolute -left-11 cursor-pointer"
-                      />
-                    )
-                  : undefined}
-                <ManageSample
+                <TrashIcon
+                  onClick={() => {
+                    removeTrack(index);
+                    toast({
+                      /** @ts-ignore */
+                      title: (
+                        <div className="flex gap-3">
+                          <InfoIcon />
+                          {samplesState[trackId].name} deleted
+                        </div>
+                      ),
+                    });
+                  }}
+                  className="absolute -left-11 cursor-pointer"
+                />
+                     <ManageSample
                   url={"/0/calp.wav"}
                   name={samplesState[trackId].name ?? ""}
                   id={trackId.toString()}
@@ -365,25 +432,23 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                     );
                   })}
                 </div>
-                <label className="flex scale-50 flex-col items-start justify-start">
-                  <input
-                    type="range"
-                    className="rounded-full"
+                <label className="flex flex-col items-center">
+                  <Slider
+                    className="w-36 rounded-full"
                     min={0}
                     max={10}
                     step={0.1}
                     onChange={(e) => handleTrackVolumeChange(e, trackId)}
-                    defaultValue={5}
+                    defaultValue={[5]}
                   />
                 </label>
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          {/* <div className="w-full">
+          <div className="w-full">
             <div
-              className="container mt-10 w-full"
-              // @ts-expect-error
-              {...getRootProps({ style })}
+              className="container mt-10 w-full border-gray-700 border-2 p-5 rounded-md border-dashed flex justify-center"
+              {...getRootProps()}
             >
               <input {...getInputProps()} />
               <div className="flex gap-3">
@@ -394,14 +459,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 </p>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
         <div className="grid grid-cols-4 gap-4">
-          <button
+          {/* <button
             onClick={handleStartClick}
             className="h-12 w-36 rounded bg-blue-500 text-white"
           >
-            {isPlaying ? "Pause" : "Start"}
+            {isPlaying ? 'Pause' : 'Start'}
           </button>
           <button
             onClick={handleSaveClick}
@@ -420,27 +485,25 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             className="h-12 w-36 rounded bg-red-500 text-white"
           >
             Clear Session
-          </button>
+          </button> */}
           <label className="col-span-2 flex flex-col items-center">
             <span>BPM</span>
-            <input
-              type="range"
+            <Slider
               min={30}
               max={300}
               step={1}
               onChange={handleBpmChange}
-              defaultValue={120}
+              defaultValue={[120]}
             />
           </label>
           <label className="col-span-2 flex flex-col items-center">
             <span>Volume</span>
-            <input
-              type="range"
+            <Slider
               min={0}
               max={1}
               step={0.01}
               onChange={handleVolumeChange}
-              defaultValue={1}
+              defaultValue={[33]}
             />
           </label>
         </div>

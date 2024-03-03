@@ -62,10 +62,11 @@ const PianoKey = ({ note, playNote, keyName, keyDown }: PianoKeyProps) => {
         className={`${
           isSharp
             ? "absolute z-10 -mx-8 h-20 w-8 bg-black text-white"
-            : "h-40 w-full bg-white text-black"
-        } ${octaveStyles[octave - 4]} rounded-sm border-2 border-solid ${
-          isSharp ? "border-black" : "border-neutral-800"
-        } ${keyDown ? "bg-neutral-400" : ""}`}
+            : "h-40 w-full text-black"
+        } 
+        ${octaveStyles[octave - 4]} rounded-sm border-2 border-solid 
+        ${isSharp ? "border-black" : "border-neutral-800"} 
+        ${keyDown ? "bg-neutral-400" : isSharp ? "bg-black" : "bg-white"}`}
       >
         <div className="flex flex-col items-center gap-0">
           <span
@@ -126,9 +127,13 @@ export default function Home() {
     );
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (noteKeyMap[event.key]) {
+      if (noteKeyMap[event.key] && !keysDown[noteKeyMap[event.key].note]) {
         const { note } = noteKeyMap[event.key];
         playNote(note, true);
+        setKeysDown((prevKeysDown) => ({
+          ...prevKeysDown,
+          [noteKeyMap[event.key].note]: true,
+        }));
       }
     };
 
@@ -136,6 +141,10 @@ export default function Home() {
       if (noteKeyMap[event.key]) {
         const { note } = noteKeyMap[event.key];
         playNote(note, false);
+        setKeysDown((prevKeysDown) => ({
+          ...prevKeysDown,
+          [noteKeyMap[event.key].note]: false,
+        }));
       }
     };
 
@@ -146,8 +155,10 @@ export default function Home() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [synth, isRecording, startOctave, octave]);
+    // You need to include keysDown in the dependency array here,
+    // but be cautious as this could cause the effect to run too often.
+    // Consider dependencies carefully to avoid excessive re-renders or effect executions.
+  }, [synth, isRecording, startOctave, octave, keysDown]);
 
   const playNote = (note, isKeyDown) => {
     if (isKeyDown) {
