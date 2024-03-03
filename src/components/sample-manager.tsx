@@ -92,7 +92,7 @@ function ManageSample({
                   <Separator />
                   <ScrollArea className="h-52 w-full">
                     <div className="space-y-[0.5px]">
-                      {selectedCategory?.samples.map((sample) => (
+                      {selectedCategory?.samples.map((sample: any) => (
                         <div
                           key={sample.name}
                           className={`m-0 cursor-pointer p-1.5 text-sm hover:bg-neutral-800 ${

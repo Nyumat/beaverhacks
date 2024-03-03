@@ -55,5 +55,5 @@ export interface Sample {
 
 export interface Category {
   name: string | any;
-  samples: Sample[];
+  samples: Sample[] | any;
 }
