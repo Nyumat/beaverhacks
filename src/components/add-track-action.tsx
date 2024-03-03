@@ -158,7 +158,7 @@ export function TrackActionsDialog({
   );
 
   useEffect(() => {
-    if (tempTrack.length !== 0) {
+    if (tempTrack?.length !== 0) {
       setSelectedSample(tempTrack[0]);
     }
   }, [tempTrack]);
@@ -179,7 +179,7 @@ export function TrackActionsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {tempTrack.length === 0 ? (
+        {tempTrack?.length === 0 ? (
           <>
             <p className="-mb-8 -mt-2 text-xs font-semibold text-neutral-100">
               Sample
@@ -198,7 +198,7 @@ export function TrackActionsDialog({
         ) : (
           <div className="flex gap-4">
             <FileIcon />
-            <p>{tempTrack[0].name}</p>
+            <p>{tempTrack[0]?.name}</p>
           </div>
         )}
         <p className="-mb-8 -mt-2 text-xs text-neutral-400">
@@ -210,7 +210,11 @@ export function TrackActionsDialog({
             type="button"
             variant="default"
             onClick={() => {
-              if (!selectedSample?.name || !selectedSample?.url) {
+              const hasSelectedSample =
+                selectedSample?.name && selectedSample?.url;
+              const hasFile = getInputProps().value !== "";
+
+              if (!hasSelectedSample && !hasFile) {
                 toast({
                   title: "Error",
                   description:
@@ -219,42 +223,21 @@ export function TrackActionsDialog({
                 });
                 return;
               }
-              if (selectedSample?.name !== "" && selectedSample?.url !== "") {
+
+              if (hasSelectedSample) {
                 addTrack(selectedSample);
-                setOpen(false);
                 setSelectedCategory(null);
                 setSelectedSample(null);
-                toast({
-                  title: "Success",
-                  description: "Track added successfully.",
-                  variant: "default",
-                });
-              } else if (!selectedSample && getInputProps().value !== "") {
-                const file = getInputProps();
-                if (file.value !== "") {
-                  onSampleSave();
-                  setOpen(false);
-                  toast({
-                    title: "Success",
-                    description: "Track added successfully.",
-                    variant: "default",
-                  });
-                } else {
-                  toast({
-                    title: "Error",
-                    description:
-                      "No file selected. Please select a file to upload first.",
-                    variant: "destructive",
-                  });
-                }
-              } else {
-                toast({
-                  title: "Error",
-                  description:
-                    "No sample selected. Please select a sample to add to the track.",
-                  variant: "destructive",
-                });
+              } else if (hasFile) {
+                onSampleSave();
               }
+
+              setOpen(false);
+              toast({
+                title: "Success",
+                description: "Track added successfully.",
+                variant: "default",
+              });
             }}
           >
             Add Track

@@ -16,11 +16,11 @@ import SequencerCommand from "./sequencer-command";
 import { SequencerMenu } from "./sequencer-menu";
 
 import { Sample } from "@/types";
+import { useUser } from "@clerk/clerk-react";
 import * as Tone from "tone";
 import { TrackActionsDialog } from "./add-track-action";
 import { useToast } from "./ui/use-toast";
 const NOTE = "C2";
-import { useUser } from "@clerk/clerk-react";
 
 type Track = {
   id: number;
@@ -29,7 +29,7 @@ type Track = {
 };
 
 type Props = {
-  samples: { url: string; name: string | undefined }[];
+  samples: { url: Tone.ToneAudioBuffer; name: string | undefined }[];
   numOfSteps?: number;
 };
 
@@ -40,7 +40,7 @@ const shadeToColor = (shade: string, step: number) => {
 };
 
 type TempTrack = {
-  url: string;
+  url: Tone.ToneAudioBuffer;
   name: string;
 };
 
@@ -64,15 +64,16 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const sendFile = useMutation(api.files.sendFile);
+  const deleteTrack = useMutation(api.sequencer.deleteTrack);
   /**@ts-ignore */
   const storedFiles = useQuery(api.files.getFiles, { userId: user?.id });
 
   // Check this it may lead to issues
   React.useEffect(() => {
     if (storedFiles && tempTrack && tempTrack.length === 0) {
-      const formatedStoredFiles = storedFiles.map((file) => ({
+      const formatedStoredFiles = storedFiles.map((file: any) => ({
         name: file.name,
-        url: file.filePath,
+        url: new Tone.Buffer(file.url),
       }));
       /**@ts-ignore */
       setSampleState((prev) => [...prev, ...formatedStoredFiles]);
@@ -81,7 +82,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
 
   const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
     const formattedAcceptedFiles = acceptedFiles.map((file) => {
-      const url = URL.createObjectURL(file);
+      const url = new Tone.Buffer(URL.createObjectURL(file));
       const name = file.name.split(".");
       name.pop();
       return {
@@ -114,16 +115,18 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         userId: user?.id,
         sessionId: "temp",
       });
+      setTempTrack(null);
     } catch (err) {
       console.error(err);
+      setTempTrack(null);
     }
   }, []);
 
   const addTrack = (sample: Sample) => {
-    const url = new Blob([sample.url]).toString();
+    const url = new Tone.Buffer(sample.url);
     const name = sample.name;
-    setSampleState((prev) => [...prev, { url, name }]);
-    setTempTrack([]);
+    const track = { url, name };
+    setSampleState((prev) => [...prev, track]);
   };
 
   const handleAddTrack = () => {
@@ -152,7 +155,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     (url: string, id: string, track: [number, number]) => {
       setSampleState((prev) => {
         const mutatedPrev = [...prev];
-        mutatedPrev[track[0]].url = url;
+        mutatedPrev[track[0]].url = new Tone.Buffer(url);
         return mutatedPrev;
       });
     },
@@ -163,7 +166,8 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     try {
       const samplesBase64 = await Promise.all(
         samplesState.map(async ({ url, name }) => {
-          const response = await fetch(url);
+          const actualUrl = url instanceof Tone.Buffer ? url.name : url;
+          const response = await fetch(actualUrl);
           const blob = await response.blob();
           return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -334,6 +338,10 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   };
 
   const removeTrack = (index: number) => {
+    const file = storedFiles?.find(
+      (file: any) => file.name === samplesState[index].name
+    );
+    if (file) deleteTrack({ name: samplesState[index].name ?? "" });
     setSampleState((prev) => {
       const modifiedArr = [...prev];
       modifiedArr.splice(index, 1);
@@ -408,7 +416,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
               >
                 <TrashIcon
                   onClick={() => {
-                    removeTrack(index);
+                    removeTrack(trackId);
                     toast({
                       /** @ts-ignore */
                       title: (

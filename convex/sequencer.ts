@@ -1,5 +1,5 @@
-import { mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { mutation } from "./_generated/server";
 
 export const createSequenceSession = mutation({
   args: {
@@ -14,5 +14,16 @@ export const createSequenceSession = mutation({
       checkedSteps: args.checkedSteps,
     });
     return newSequenceSession;
+  },
+});
+
+export const deleteTrack = mutation({
+  args: {
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const tracks = await ctx.db.query("files").collect();
+    const trackToDelete = tracks.filter((track) => track.name === args.name);
+    await ctx.db.delete(trackToDelete[0]?._id);
   },
 });

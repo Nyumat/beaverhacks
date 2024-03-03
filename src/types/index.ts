@@ -1,4 +1,5 @@
 import { Icons } from "@/components/icons";
+import * as Tone from "tone";
 
 export type SidebarNavItem = {
   title: string;
@@ -48,7 +49,7 @@ export type DashboardConfig = {
 };
 
 export interface Sample {
-  url: string;
+  url: Tone.ToneAudioBuffer;
   name: string;
 }
 
