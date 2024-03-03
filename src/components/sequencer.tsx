@@ -1,14 +1,14 @@
 "use client";
 
-
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { Reorder } from 'framer-motion';
-import { PlusIcon, TrashIcon } from 'lucide-react';
-import React from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Toaster } from '@/components/ui/toaster';
-import SequencerCommand from './sequencer-command';
+import { Input } from "@/components/ui/input";
+import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils";
+import { Reorder } from "framer-motion";
+import { TrashIcon } from "lucide-react";
+import React from "react";
+import { useDropzone } from "react-dropzone";
+import ManageSample from "./sample-manager";
+import SequencerCommand from "./sequencer-command";
 
 import * as Tone from "tone";
 import { useToast } from "./ui/use-toast";
@@ -51,6 +51,12 @@ const acceptStyle = {
 
 const rejectStyle = {
   borderColor: "#ff1744",
+};
+
+const shadeToColor = (shade: string, step: number) => {
+  const shades = ["800", "700", "600"];
+  const index = Math.floor(step / 3);
+  return `bg-${shade}-${shades[index] ?? "500"}`;
 };
 
 export function Sequencer({ samples, numOfSteps = 16 }: Props) {
@@ -98,6 +104,17 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       setIsPlaying(true);
     }
   };
+
+  const changeSample = React.useCallback(
+    (url: string, id: string, track: [number, number]) => {
+      setSampleState((prev) => {
+        const mutatedPrev = [...prev];
+        mutatedPrev[track[0]].url = url;
+        return mutatedPrev;
+      });
+    },
+    []
+  );
 
   const handleSaveClick = React.useCallback(async () => {
     try {
@@ -284,44 +301,42 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             {trackIds.map((trackId, index) => (
               <Reorder.Item
                 value={trackId}
-                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle relative"
+                className="relative flex flex-row items-center justify-center space-y-2"
                 key={trackId}
                 as="div"
               >
                 {samplesState[trackId]
-                  ? samplesState[trackId].url?.includes('blob:') && (
+                  ? samplesState[trackId].url?.includes("blob:") && (
                       <TrashIcon
                         onClick={() => removeTrack(index)}
                         className="absolute -left-11 cursor-pointer"
                       />
                     )
                   : undefined}
-                <Input
-                  className="mr-2  whitespace-nowrap text-white cursor-text w-32"
-                  value={
-                    samplesState[trackId]
-                      ? samplesState[trackId].name
-                      : undefined
-                  }
-                  onChange={(e) => handleRename(e, trackId)}
+                <ManageSample
+                  url={"/0/calp.wav"}
+                  name={samplesState[trackId].name ?? ""}
+                  id={trackId.toString()}
+                  track={[trackId, index + 1]}
+                  handleSampleChange={changeSample}
                 />
-                <div className="mx-auto flex w-2/3 flex-row space-x-2">
+                <div className="-my-2 mx-3 flex flex-row gap-0 space-x-[8px]">
                   {stepIds.map((stepId, stepIndex) => {
                     const id = trackId + "-" + stepId;
                     const checkedStep = checkedSteps.includes(id) ? id : null;
                     const isCurrentStep = stepId === currentStep && isPlaying;
-                    const shade = stepIndex % 4 === 0 ? 600 : 800;
-                    // TODO: Figure out why shade not applying
+                    const shade = 800;
                     return (
                       <label
                         key={id}
                         className={cn(
-                          `w-12 h-10 rounded-sm flex items-center justify-center bg-neutral-700 transition-colors duration-100 scale-100 hover:scale-110 cursor-pointer`,
+                          `w-10 h-10 rounded-sm flex items-center justify-center transition-transform duration-75 cursor-default transform bg-neutral-${shade} active:scale-90`,
                           {
                             "bg-green-500": checkedStep,
-                            "bg-purple-500 scale-110 transition-colors duration-100":
+                            "bg-purple-500 scale-110 transition-transform duration-100":
                               isCurrentStep,
                             "drop-shadow-[0_0_0.4rem_#a855f7]": isCurrentStep,
+                            "active:scale-90": true,
                           }
                         )}
                       >
@@ -350,10 +365,10 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                     );
                   })}
                 </div>
-                <label className="flex flex-col items-center">
+                <label className="flex scale-50 flex-col items-start justify-start">
                   <input
                     type="range"
-                    className="w-36 rounded-full"
+                    className="rounded-full"
                     min={0}
                     max={10}
                     step={0.1}
