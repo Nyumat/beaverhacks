@@ -36,6 +36,7 @@ export default defineSchema({
   }),
   files: defineTable({
     body: v.string(),
+    name: v.string(),
     userId: v.string(),
     format: v.string(),
     sessionId: v.string(),

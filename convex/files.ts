@@ -11,12 +11,14 @@ export const sendFile = mutation({
     storageId: v.id("_storage"),
     userId: v.string(),
     sessionId: v.string(),
+    name: v.string(),
   },
   handler: async (ctx, args) => {
     await ctx.db.insert("files", {
       body: args.storageId,
       userId: args.userId,
       format: "file",
+      name: args.name,
       sessionId: args.sessionId,
     });
   },

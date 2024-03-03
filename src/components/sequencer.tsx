@@ -67,7 +67,17 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   /**@ts-ignore */
   const storedFiles = useQuery(api.files.getFiles, { userId: user?.id });
 
-  console.log(tempTrack);
+  // Check this it may lead to issues
+  React.useEffect(() => {
+    if (storedFiles && tempTrack && tempTrack.length === 0) {
+      const formatedStoredFiles = storedFiles.map((file) => ({
+        name: file.name,
+        url: file.filePath,
+      }));
+      /**@ts-ignore */
+      setSampleState((prev) => [...prev, ...formatedStoredFiles]);
+    }
+  }, [storedFiles]);
 
   const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
     const formattedAcceptedFiles = acceptedFiles.map((file) => {
@@ -98,7 +108,12 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         throw new Error(`User is not authenticated`);
       }
       const { storageId } = json;
-      await sendFile({ storageId, userId: user?.id, sessionId: "temp" });
+      await sendFile({
+        storageId,
+        name: formattedAcceptedFiles[0].name,
+        userId: user?.id,
+        sessionId: "temp",
+      });
     } catch (err) {
       console.error(err);
     }
