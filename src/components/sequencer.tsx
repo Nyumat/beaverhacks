@@ -108,6 +108,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     const url = new Blob([sample.url]).toString();
     const name = sample.name;
     setSampleState((prev) => [...prev, { url, name }]);
+    setTempTrack([]);
   };
 
   const handleAddTrack = () => {
