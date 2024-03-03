@@ -208,7 +208,7 @@ export default function Home() {
     <div className="relative flex min-h-screen bg-black text-white">
       <div className="min-w-48">
         <div className="fixed top-3.5 h-full">
-          <div className="flex h-full max-w-full flex-col border-r-2 p-2">
+          <div className="flex h-fit max-w-full flex-col p-2">
             <div className="flex flex-row">
               <button
                 onClick={startRecording}
@@ -222,7 +222,7 @@ export default function Home() {
                 disabled={!isRecording}
                 className="mr-2 h-fit rounded border-[1px] px-4 py-2 text-lg border-neutral-800"
               >
-                <div className="size-5 rounded-sm bg-neutral-500"></div>
+                <div className="size-5 rounded-sm bg-white"></div>
               </button>
               <button
                 onClick={playBackRecording}
@@ -241,7 +241,7 @@ export default function Home() {
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class=" text-neutral-400"
+                  class=" text-white"
                 >
                   <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
