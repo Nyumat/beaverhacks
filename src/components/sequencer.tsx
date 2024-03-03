@@ -2,17 +2,16 @@
 
 import { Input } from "@/components/ui/input";
 
+import { Slider } from "@/components/ui/slider";
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { Reorder } from "framer-motion";
 import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import { Toaster } from "@/components/ui/toaster";
-import SequencerCommand from "./sequencer-command";
-import { Slider } from "@/components/ui/slider";
 import ManageSample from "./sample-manager";
+import SequencerCommand from "./sequencer-command";
 import { SequencerMenu } from "./sequencer-menu";
-
 
 import * as Tone from "tone";
 import { useToast } from "./ui/use-toast";
@@ -325,7 +324,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   return (
     <>
       <div className="flex flex-col items-center justify-start space-y-4">
-        <div className="w-full flex p-3">
+        <div className="flex w-full p-3">
           <SequencerMenu
             handleStartClick={handleStartClick}
             handleSaveClick={handleSaveClick}
@@ -361,7 +360,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             {trackIds.map((trackId, index) => (
               <Reorder.Item
                 value={trackId}
-                className="flex w-full flex-row items-center justify-center gap-2 space-y-2 align-middle relative cursor-grab"
+                className="relative flex w-full cursor-grab flex-row items-center justify-center gap-2 space-y-2 align-middle"
                 key={trackId}
                 as="div"
               >
@@ -380,7 +379,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                   }}
                   className="absolute -left-11 cursor-pointer"
                 />
-                     <ManageSample
+                <ManageSample
                   url={"/0/calp.wav"}
                   name={samplesState[trackId].name ?? ""}
                   id={trackId.toString()}
@@ -438,6 +437,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                     min={0}
                     max={10}
                     step={0.1}
+                    // @ts-ignore
                     onChange={(e) => handleTrackVolumeChange(e, trackId)}
                     defaultValue={[5]}
                   />
@@ -447,7 +447,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </Reorder.Group>
           <div className="w-full">
             <div
-              className="container mt-10 w-full border-gray-700 border-2 p-5 rounded-md border-dashed flex justify-center"
+              className="container mt-10 flex w-full justify-center rounded-md border-2 border-dashed border-gray-700 p-5"
               {...getRootProps()}
             >
               <input {...getInputProps()} />
