@@ -30,7 +30,7 @@ type Track = {
 };
 
 type Props = {
-  samples: { url: Tone.ToneAudioBuffer; name: string | undefined }[];
+  samples: { url: Tone.ToneAudioBuffer | any; name: string | undefined }[];
   numOfSteps?: number;
 };
 
@@ -82,6 +82,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       /**@ts-ignore */
       setSampleState((prev) => [...prev, ...formatedStoredFiles]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storedFiles]);
 
   const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
@@ -124,6 +125,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       console.error(err);
       setTempTrack(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addTrack = (sample: Sample) => {
@@ -451,7 +453,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                 {samplesState[trackId] !== undefined && (
                   <ManageSample
                     key={trackId}
-                    url={samplesState[trackId].url ?? ""}
+                    url={samplesState[trackId].url.toString()}
                     name={samplesState[trackId].name ?? ""}
                     id={trackId.toString()}
                     track={[trackId, index + 1]}

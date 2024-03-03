@@ -1,5 +1,4 @@
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -11,10 +10,11 @@ import {
 } from "@/components/ui/command";
 import { DeleteIcon, PlayIcon, SaveIcon, ShareIcon } from "lucide-react";
 import React from "react";
+import * as Tone from "tone";
 
 type Props = {
   toast: any;
-  samples: { url: string; name: string | undefined }[];
+  samples: { url: Tone.ToneAudioBuffer; name: string | undefined }[];
   numOfSteps?: number;
   checkedSteps: string[];
   handleSaveClick: () => void;

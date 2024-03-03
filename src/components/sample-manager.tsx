@@ -102,7 +102,11 @@ function ManageSample({
                           }`}
                           onClick={() => {
                             setSelectedSample(sample);
-                            handleSampleChange(sample.url, id, track);
+                            handleSampleChange(
+                              sample.url.toString(),
+                              id,
+                              track
+                            );
                           }}
                         >
                           {sample.name}
