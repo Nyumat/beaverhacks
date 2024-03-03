@@ -28,34 +28,6 @@ type Props = {
   numOfSteps?: number;
 };
 
-const baseStyle = {
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  padding: "20px",
-  borderWidth: 2,
-  borderRadius: 2,
-  borderColor: "border-neutral-800",
-  borderStyle: "dashed",
-  cursor: "pointer",
-  backgroundColor: "#404040",
-  color: "#f7fff0",
-  transition: "border .24s ease-in-out",
-};
-
-const focusedStyle = {
-  borderColor: "#99c8ff",
-};
-
-const acceptStyle = {
-  borderColor: "#00e676",
-};
-
-const rejectStyle = {
-  borderColor: "#ff1744",
-};
-
 const shadeToColor = (shade: string, step: number) => {
   const shades = ["800", "700", "600"];
   const index = Math.floor(step / 3);
@@ -163,6 +135,8 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       toast({
         title: "Session Deleted!",
       });
+      setSampleState(samples);
+      setCheckedSteps([]);
     } catch (err) {
       toast({
         title: "Uh Oh! Something went wrong.",
@@ -177,7 +151,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     const data = localStorage.getItem("data");
     if (data) {
       const parsedData = JSON.parse(data);
-
       const samplesWithBlobUrls = parsedData.samples.map(
         ({ data: base64Data, name }: { data: string; name: string }) => {
           const byteCharacters = atob(base64Data.split(",")[1]);
@@ -193,7 +166,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           return { url: blobUrl, name };
         }
       );
-
       setCheckedSteps(parsedData.checkedSteps);
       setSampleState(samplesWithBlobUrls);
     }
@@ -379,13 +351,15 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                   }}
                   className="absolute -left-11 cursor-pointer"
                 />
-                <ManageSample
-                  url={"/0/calp.wav"}
-                  name={samplesState[trackId].name ?? ""}
-                  id={trackId.toString()}
-                  track={[trackId, index + 1]}
-                  handleSampleChange={changeSample}
-                />
+                {samplesState[trackId] !== undefined && (
+                  <ManageSample
+                    url={"/0/calp.wav"}
+                    name={samplesState[trackId].name ?? ""}
+                    id={trackId.toString()}
+                    track={[trackId, index + 1]}
+                    handleSampleChange={changeSample}
+                  />
+                )}
                 <div className="-my-2 mx-3 flex flex-row gap-0 space-x-[8px]">
                   {stepIds.map((stepId, stepIndex) => {
                     const id = trackId + "-" + stepId;
@@ -447,7 +421,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           </Reorder.Group>
           <div className="w-full">
             <div
-              className="container mt-10 flex w-full justify-center rounded-md border-2 border-dashed border-gray-700 p-5"
+              className="container mt-10 w-full border-gray-700 border-2 p-5 rounded-md border-dashed flex justify-center"
               {...getRootProps()}
             >
               <input {...getInputProps()} />
@@ -515,6 +489,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
           checkedSteps={checkedSteps}
           handleSaveClick={handleSaveClick}
           handleClearSessionClick={handleClearSessionClick}
+          handleStartClick={handleStartClick}
         />
       </div>
     </>

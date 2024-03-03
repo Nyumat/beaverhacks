@@ -8,9 +8,9 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from '@/components/ui/command';
-import { DeleteIcon, SaveIcon, ShareIcon } from 'lucide-react';
-import React from 'react';
+} from "@/components/ui/command";
+import { DeleteIcon, PlayIcon, SaveIcon, ShareIcon } from "lucide-react";
+import React from "react";
 
 type Props = {
   toast: any;
@@ -19,6 +19,7 @@ type Props = {
   checkedSteps: string[];
   handleSaveClick: () => void;
   handleClearSessionClick: () => void;
+  handleStartClick: () => void;
 };
 
 export default function SequencerCommand({
@@ -28,6 +29,7 @@ export default function SequencerCommand({
   checkedSteps,
   handleSaveClick,
   handleClearSessionClick,
+  handleStartClick,
 }: Props) {
   const [open, setOpen] = React.useState(false);
 
@@ -49,26 +51,31 @@ export default function SequencerCommand({
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
-      if (open && e.key === 'b' && (e.metaKey || e.ctrlKey) && open) {
+      if (open && e.key === "b" && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionSave();
       }
-      if (e.key === 'q' && (e.metaKey || e.ctrlKey) && open) {
+      if (e.key === "q" && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionDelete();
       }
-      if (e.key === 'z' && (e.metaKey || e.ctrlKey) && open) {
+      if (e.key === "z" && (e.metaKey || e.ctrlKey) && open) {
         e.preventDefault();
         handleSessionDelete();
+      }
+      if (e.key === "p" && (e.metaKey || e.ctrlKey) && open && e.altKey) {
+        e.preventDefault();
+        setOpen(false);
+        handleStartClick();
       }
     };
 
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     open,
@@ -76,6 +83,7 @@ export default function SequencerCommand({
     handleSessionSave,
     handleSessionDelete,
     handleSessionDelete,
+    handleStartClick,
   ]);
 
   return (
@@ -85,6 +93,11 @@ export default function SequencerCommand({
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Actions">
+            <CommandItem onSelect={handleStartClick}>
+              <PlayIcon className="mr-2 size-4" />
+              Play
+              <CommandShortcut>⌘ alt P</CommandShortcut>
+            </CommandItem>
             <CommandItem onSelect={handleSessionSave}>
               <SaveIcon className="mr-2 size-4" />
               Save Session

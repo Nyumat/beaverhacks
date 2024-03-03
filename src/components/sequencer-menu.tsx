@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Menubar,
   MenubarContent,
@@ -6,7 +6,7 @@ import {
   MenubarMenu,
   MenubarShortcut,
   MenubarTrigger,
-} from '@/components/ui/menubar';
+} from "@/components/ui/menubar";
 
 type props = {
   handleStartClick: () => Promise<void>;
@@ -29,26 +29,30 @@ export function SequencerMenu({
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'p' && (e.metaKey || e.ctrlKey) && e.altKey) {
+      if (e.key === "p" && (e.metaKey || e.ctrlKey) && e.altKey) {
         e.preventDefault();
         handleStartClick();
         setIsPlaying((prev) => !prev);
       }
-      if (e.key === 's' && (e.metaKey || e.ctrlKey) && e.altKey) {
+      if (e.key === "s" && (e.metaKey || e.ctrlKey) && e.altKey) {
         e.preventDefault();
         handleSaveClick();
       }
-      if (e.key === 'c' && (e.metaKey || e.ctrlKey) && e.altKey) {
+      if (e.key === "c" && (e.metaKey || e.ctrlKey) && e.altKey) {
         e.preventDefault();
         clearSteps();
       }
-      if (e.key === 'd' && (e.metaKey || e.ctrlKey) && e.altKey) {
+      if (e.key === "d" && (e.metaKey || e.ctrlKey) && e.altKey) {
         e.preventDefault();
         handleClearSessionClick();
       }
+      if (e.key === "t" && (e.metaKey || e.ctrlKey) && e.altKey) {
+        e.preventDefault();
+        setIsLayoutUnlocked((prev) => !prev);
+      }
     };
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     handleStartClick,
@@ -70,7 +74,7 @@ export function SequencerMenu({
               setIsPlaying((prev) => !prev);
             }}
           >
-            {isPlaying ? 'Stop' : 'Play'}{' '}
+            {isPlaying ? "Stop" : "Play"}{" "}
             <MenubarShortcut>⌘ alt P</MenubarShortcut>
           </MenubarItem>
           <MenubarItem onSelect={handleSaveClick}>
@@ -88,7 +92,7 @@ export function SequencerMenu({
         <MenubarTrigger>Layout</MenubarTrigger>
         <MenubarContent>
           <MenubarItem onSelect={() => setIsLayoutUnlocked((prev) => !prev)}>
-            {`${isLayoutUnlocked ? 'Lock' : 'Unlock'} Track Layout`}{' '}
+            {`${isLayoutUnlocked ? "Lock" : "Unlock"} Track Layout`}{" "}
             <MenubarShortcut>⌘ alt T</MenubarShortcut>
           </MenubarItem>
         </MenubarContent>
