@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { asyncMap } from "convex-helpers";
 
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
@@ -32,11 +33,14 @@ export const deleteById = mutation({
 
 export const getFiles = query({
   args: { userId: v.string() },
-  handler: (ctx, { userId }) => {
-    const samples = ctx.db
+  handler: async (ctx, { userId }) => {
+    const samples = await ctx.db
       .query("files")
       .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
-    return samples;
+    return await asyncMap(samples, async (sample) => ({
+      ...sample,
+      filePath: await ctx.storage.getUrl(sample.body),
+    }));
   },
 });
