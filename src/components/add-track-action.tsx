@@ -22,7 +22,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { categories } from "@/config/constants";
 import { Category, Sample } from "@/types";
-import React from "react";
+import React, { useEffect } from "react";
 import { Icons } from "./icons";
 import { Separator } from "./ui/separator";
 import { useToast } from "./ui/use-toast";
@@ -156,6 +156,12 @@ export function TrackActionsDialog({
   const [selectedSample, setSelectedSample] = React.useState<Sample | null>(
     null
   );
+
+  useEffect(() => {
+    if (tempTrack.length !== 0) {
+      setSelectedSample(tempTrack[0]);
+    }
+  }, [tempTrack]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
