@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![BeatBytes](/public/hero-preview.png)
 
-## Getting Started
+# [BeatBytes](https://beatbytes.vercel.app/)
 
-First, run the development server:
+BeatBytes is a web-based all-in-one music production platform.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The platform is built with [Convex](https://convex.dev/), [Tone.js](https://tonejs.github.io/), and [Next.js](https://nextjs.org/) as the main dependencies. BeatBytes is a fun and interactive way to create beats, rhythms, and melodies using a simple and intuitive interface. The UI was designed with [Framer Motion](https://www.framer.com/motion/) and [shadcn/ui](https://ui.shadcn.com/). The icons are from [Lucide Icons](https://lucide.dev/).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> This project was created as a submission for the Oregon State University Winter 2024 "hobbies" Hackathon, organized by [the Hackathon Club at OSU](https://oregonstatehackathon.com/).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Features 🚀
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **🎵 Step Sequencer** - Program your own beats and rhythms with ease. Set different patterns for each instrument or sound, creating complex rhythms effortlessly.
+- **🎹 Synthesizer** - Create your own melodies and chords with the built-in synthesizer. Choose from a variety of samples and effects to create your own unique sound.
+- **🥁 Drum Machine** - Choose from a variety of drum kits and sounds to create your own beats and rhythms. Mix and match different sounds to create your own unique drum patterns.
 
-## Learn More
+## ⚡️ Tech Stack ⚡️
 
-To learn more about Next.js, take a look at the following resources:
+- [Convex](https://convex.dev/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Lucide Icons](https://lucide.dev/)
+- [Next.js](https://nextjs.org/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tone.js](https://tonejs.github.io/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🌟 Contributors 🌟
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<a href="https://github.com/nyumat/beaverhacks/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nyumat/beaverhacks" />
+</a>
