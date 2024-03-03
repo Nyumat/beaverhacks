@@ -380,7 +380,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
                   className="absolute -left-11 cursor-pointer"
                 />
                 <ManageSample
-                  url={"/0/calp.wav"}
                   name={samplesState[trackId]?.name ?? ""}
                   id={trackId.toString()}
                   track={[trackId, index + 1]}

@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 
 interface SampleProps {
-  url: string;
+  url?: string;
   name: string;
   id: string;
   track: [number, number];
@@ -68,13 +68,7 @@ const categories: Category[] = [
   },
 ];
 
-function ManageSample({
-  url,
-  name,
-  id,
-  track,
-  handleSampleChange,
-}: SampleProps) {
+function ManageSample({ name, id, track, handleSampleChange }: SampleProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
