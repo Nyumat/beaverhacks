@@ -34,4 +34,10 @@ export default defineSchema({
     numOfSteps: v.number(),
     checkedSteps: v.array(v.string()),
   }),
+  files: defineTable({
+    body: v.string(),
+    userId: v.string(),
+    format: v.string(),
+    sessionId: v.string(),
+  }),
 });

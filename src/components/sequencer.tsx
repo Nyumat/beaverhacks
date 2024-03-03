@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Reorder } from "framer-motion";
 import { InfoIcon, TrashIcon } from "lucide-react";
 import React from "react";
@@ -20,6 +20,7 @@ import * as Tone from "tone";
 import { TrackActionsDialog } from "./add-track-action";
 import { useToast } from "./ui/use-toast";
 const NOTE = "C2";
+import { useUser } from "@clerk/clerk-react";
 
 type Track = {
   id: number;
@@ -53,6 +54,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     ...Array(samples.length).keys(),
   ]);
   const [isLayoutUnlocked, setIsLayoutUnlocked] = React.useState(false);
+  const { user } = useUser();
 
   const tracksRef = React.useRef<Track[]>([]);
   const stepsRef = React.useRef<HTMLInputElement[][]>([[]]);
@@ -60,7 +62,14 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const seqRef = React.useRef<Tone.Sequence | null>(null);
   const stepIds = [...Array(numOfSteps).keys()] as const;
 
-  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const sendFile = useMutation(api.files.sendFile);
+  /**@ts-ignore */
+  const storedFiles = useQuery(api.files.getFiles, { userId: user?.id });
+
+  console.log(storedFiles);
+
+  const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
     const formattedAcceptedFiles = acceptedFiles.map((file) => {
       const url = URL.createObjectURL(file);
       const name = file.name.split(".");
@@ -71,6 +80,28 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       };
     });
     setTempTrack(formattedAcceptedFiles);
+
+    const postUrl = await generateUploadUrl();
+
+    //Upload file to backend, probably move this to the add track handler
+    try {
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": acceptedFiles[0]!.type },
+        body: acceptedFiles[0],
+      });
+      const json = await result.json();
+      if (!result.ok) {
+        throw new Error(`Upload failed: ${JSON.stringify(json)}`);
+      }
+      if (!user?.id) {
+        throw new Error(`User is not authenticated`);
+      }
+      const { storageId } = json;
+      await sendFile({ storageId, userId: user?.id, sessionId: "temp" });
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
 
   const addTrack = (sample: Sample) => {
@@ -79,10 +110,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     setSampleState((prev) => [...prev, { url, name }]);
   };
 
-  const createSequenceSession = useMutation(
-    api.sequencer.createSequenceSession
-  );
-
   const handleAddTrack = () => {
     if (tempTrack === null) return;
     setSampleState((prev) => [...prev, ...tempTrack]);
@@ -90,7 +117,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   };
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ onDrop, maxSize: 41943040, accept: { "audio/wav": [] } });
+    useDropzone({ onDrop, multiple: false, accept: { "audio/wav": [] } });
 
   const { toast } = useToast();
 
@@ -139,10 +166,6 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         numOfSteps: numOfSteps,
         checkedSteps: checkedSteps,
       };
-
-      const result = await createSequenceSession({ ...data });
-
-      console.log(result);
 
       localStorage.setItem("data", JSON.stringify(data));
       toast({
