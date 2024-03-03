@@ -50,7 +50,7 @@ const PianoKey = ({ note, playNote, keyName, keyDown }: PianoKeyProps) => {
     "border-yellow-500",
   ];
   return (
-    <div className={cn("relative", isSharp ? "left-4" : "w-14")}>
+    <div className={cn("relative", isSharp ? "top-12" : "w-60")}>
       <button
         onMouseDown={() => playNote(note, true)}
         onMouseUp={() => playNote(note, false)}
@@ -61,8 +61,8 @@ const PianoKey = ({ note, playNote, keyName, keyDown }: PianoKeyProps) => {
         }}
         className={`${
           isSharp
-            ? "absolute z-10 -mx-8 h-20 w-8 bg-black text-white"
-            : "h-40 w-full text-black"
+            ? "absolute z-10 h-12 w-40 bg-black text-white"
+            : "h-16 w-full text-black"
         } 
         ${octaveStyles[octave - 4]} rounded-sm border-2 border-solid 
         ${isSharp ? "border-black" : "border-neutral-800"} 
@@ -205,75 +205,79 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen bg-neutral-900 text-white">
-      <div className="flex max-w-lg flex-col border-r-2 p-2">
-        <div className="flex flex-row">
-          <button
-            onClick={startRecording}
-            disabled={isRecording || isPlayingBack}
-            className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
-          >
-            <div className="size-5 rounded-full bg-red-500"></div>
-          </button>
-          <button
-            onClick={stopRecording}
-            disabled={!isRecording}
-            className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
-          >
-            <div className="size-5 rounded-sm bg-neutral-500"></div>
-          </button>
-          <button
-            onClick={playBackRecording}
-            disabled={
-              isRecording || isPlayingBack || recordedNotes.length === 0
-            }
-            className="h-fit rounded bg-neutral-700 px-3 py-1.5 text-lg hover:bg-neutral-600"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class=" text-neutral-400"
-            >
-              <polygon points="5 3 19 12 5 21 5 3" />
-            </svg>
-          </button>
-        </div>
-        <div className="mt-2 flex w-full flex-row justify-center">
-          <div className="flex w-full flex-col">
-            <p className="text-lg">Number of Octaves</p>
-            <Input
-              type="number"
-              value={octave}
-              onChange={(e) => setOctave(parseInt(e.target.value))}
-              min={1}
-              //   maybe we want to allow more? i don't think the styling will work for that though.
-              max={4}
-              className="size-12 w-full text-center"
-            />
-          </div>
-        </div>
-        <div className="mt-2 flex w-full flex-row justify-center">
-          <div className="flex w-full flex-col">
-            <p className="text-lg">Start Octave</p>
-            <Input
-              type="number"
-              value={startOctave}
-              onChange={(e) => setStartOctave(parseInt(e.target.value))}
-              min={1}
-              max={8}
-              className="size-12 w-full text-center"
-            />
+      <div className="min-w-48">
+        <div className="fixed top-3.5 h-full">
+          <div className="flex max-w-full flex-col border-r-2 p-2 h-full">
+            <div className="flex flex-row">
+              <button
+                onClick={startRecording}
+                disabled={isRecording || isPlayingBack}
+                className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
+              >
+                <div className="size-5 rounded-full bg-red-500"></div>
+              </button>
+              <button
+                onClick={stopRecording}
+                disabled={!isRecording}
+                className="mr-2 h-fit rounded bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-600"
+              >
+                <div className="size-5 rounded-sm bg-neutral-500"></div>
+              </button>
+              <button
+                onClick={playBackRecording}
+                disabled={
+                  isRecording || isPlayingBack || recordedNotes.length === 0
+                }
+                className="h-fit rounded bg-neutral-700 px-3 py-1.5 text-lg hover:bg-neutral-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class=" text-neutral-400"
+                >
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+              </button>
+            </div>
+            <div className="mt-2 flex w-full flex-row justify-center">
+              <div className="flex w-full flex-col">
+                <p className="text-lg">Number of Octaves</p>
+                <Input
+                  type="number"
+                  value={octave}
+                  onChange={(e) => setOctave(parseInt(e.target.value))}
+                  min={1}
+                  //   maybe we want to allow more? i don't think the styling will work for that though.
+                  max={4}
+                  className="size-12 w-full text-center"
+                />
+              </div>
+            </div>
+            <div className="mt-2 flex w-full flex-row justify-center">
+              <div className="flex w-full flex-col">
+                <p className="text-lg">Start Octave</p>
+                <Input
+                  type="number"
+                  value={startOctave}
+                  onChange={(e) => setStartOctave(parseInt(e.target.value))}
+                  min={1}
+                  max={8}
+                  className="size-12 w-full text-center"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-row justify-center overflow-x-auto">
+      <div className="flex flex-col justify-center overflow-visible h-fit">
         {/* TODO: Don't allow non visualized notes to be played */}
         {generateNotes(startOctave, octave).map((noteObj) => (
           <PianoKey

@@ -136,7 +136,7 @@ export default function Home() {
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-xl leading-8 text-gray-300">
                 There is no better time than now to make music, gather some
-                friends and let&aspo;s get started.
+                friends and let's get started.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <a
