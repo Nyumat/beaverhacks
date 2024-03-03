@@ -67,7 +67,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   /**@ts-ignore */
   const storedFiles = useQuery(api.files.getFiles, { userId: user?.id });
 
-  console.log(storedFiles);
+  console.log(tempTrack);
 
   const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
     const formattedAcceptedFiles = acceptedFiles.map((file) => {
@@ -481,6 +481,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
             isDragReject={isDragReject}
             onSampleSave={handleAddTrack}
             addTrack={addTrack}
+            tempTrack={tempTrack}
           />
         </div>
         <div className="grid grid-cols-4 gap-4">
