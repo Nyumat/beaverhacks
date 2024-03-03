@@ -72,24 +72,24 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 2.1 }}
           >
-            <div className="mx-auto  w-full py-12 pl-12">
-              <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-full lg:grid-cols-2 lg:overflow-x-clip">
-                <div className="mr-12 rounded-2xl border-opacity-5 bg-neutral-950/80  px-2 py-2 lg:ml-10">
-                  <div className="lg:max-w-lg ">
+            <div className="mx-auto max-w-7xl py-8 px-6 lg:px-8">
+              <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                <div className="lg:pr-8 lg:pt-4">
+                  <div className="lg:max-w-lg -mt-1">
                     <h2 className="text-xl font-semibold leading-7 text-purple-500">
                       Make Music Happen
                     </h2>
-                    <p className="mt-2 text-5xl font-bold tracking-tight dark:text-white sm:text-4xl">
+                    <p className="mt-2 text-5xl font-bold tracking-tight text-white sm:text-4xl">
                       A better workflow
                     </p>
-                    <p className="mt-6 text-lg leading-8 dark:text-gray-200">
-                      BeatBytes is a compact, collaborative, music-making
-                      computer. Make any beat or melody you desire by yourself
-                      or with your friends.
+                    <p className="mt-6 text-lg leading-8 text-gray-150">
+                      BeatBytes a compact, collaborative, music-making computer.
+                      Make any beat or melody you desire by yourself or with
+                      your friends.
                     </p>
-                    <dl className="mt-8 max-w-xl space-y-6 text-base leading-7 dark:text-gray-200 lg:max-w-none">
-                      <div className="relative rounded-lg p-2 pl-9 ring-2 ring-opacity-10 transition-all dark:ring-white/10 dark:hover:bg-white dark:hover:bg-opacity-5">
-                        <dt className="inline font-semibold dark:text-white">
+                    <dl className="mt-8 max-w-xl space-y-6 text-base leading-7 text-gray-150 lg:max-w-none">
+                      <div className="relative pl-9 ring-white rounded-lg ring-2 ring-opacity-10 p-2 hover:bg-white hover:bg-opacity-5 transition-all">
+                        <dt className="inline font-semibold text-white">
                           <AudioLines
                             className="absolute left-1.5 top-2.5 h-6 w-6 text-purple-500"
                             aria-hidden="true"
@@ -101,7 +101,7 @@ export default function Home() {
                           precision.
                         </dd>
                       </div>
-                      <div className="relative rounded-lg p-2 pl-9 ring-2 ring-opacity-10 transition-all dark:ring-white/10 dark:hover:bg-white dark:hover:bg-opacity-5">
+                      <div className="relative pl-9 ring-white rounded-lg ring-2 ring-opacity-10 p-2 hover:bg-white hover:bg-opacity-5 transition-all">
                         <dt className="inline font-semibold">
                           <KeyboardMusic
                             className="absolute left-1.5 top-2.5 h-6 w-6 text-purple-500"
@@ -114,8 +114,8 @@ export default function Home() {
                           interface.
                         </dd>
                       </div>
-                      <div className="relative rounded-lg p-2 pl-9 ring-2 ring-opacity-10 transition-all dark:ring-white/10 dark:hover:bg-white dark:hover:bg-opacity-5">
-                        <dt className="inline font-semibold dark:text-white">
+                      <div className="relative pl-9 ring-white rounded-lg ring-2 ring-opacity-10 p-2 hover:bg-white hover:bg-opacity-5 transition-all">
+                        <dt className="inline font-semibold text-white">
                           <Users
                             className="absolute left-1.5 top-2.5 h-5 w-5 text-purple-500"
                             aria-hidden="true"
@@ -133,7 +133,7 @@ export default function Home() {
                 <Image
                   src="/features.png"
                   alt="Product screenshot"
-                  className="w-[48rem] max-w-none rounded-lg border-8 border-purple-700 border-opacity-5 shadow-[0_35px_75px_-15px_rgba(90,0,170,0.475)] ring-2 ring-opacity-10 dark:ring-purple-500/50 sm:w-[57rem] md:-ml-4 lg:-ml-0"
+                  className="w-[48rem] shadow-[0_35px_75px_-15px_rgba(90,0,170,0.475)]                max-w-none rounded-lg ring-2 ring-white ring-opacity-10 border-8 border-white border-opacity-5 sm:w-[57rem] md:-ml-4 lg:-ml-0"
                   width="2432"
                   height="1442"
                 />
