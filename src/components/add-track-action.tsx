@@ -26,7 +26,6 @@ import React, { useEffect } from "react";
 import { Icons } from "./icons";
 import { Separator } from "./ui/separator";
 import { useToast } from "./ui/use-toast";
-import { FileIcon } from "lucide-react";
 
 export function ActionsTabs({
   getRootProps,
@@ -158,11 +157,10 @@ export function TrackActionsDialog({
   );
 
   useEffect(() => {
-    if (tempTrack?.length !== 0) {
-      setSelectedSample(tempTrack[0]);
+    if (tempTrack) {
+      setSelectedSample(tempTrack);
     }
   }, [tempTrack]);
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -178,29 +176,20 @@ export function TrackActionsDialog({
             Let&apos;s add a new track to your session.
           </DialogDescription>
         </DialogHeader>
+        <p className="-mb-8 -mt-2 text-xs font-semibold text-neutral-100">
+          Sample
+        </p>
+        <ActionsTabs
+          {...{ getRootProps, getInputProps }}
+          isDragAccept={isDragAccept}
+          isDragReject={isDragReject}
+          addTrack={onSampleSave}
+          setSelectedCategory={setSelectedCategory}
+          setSelectedSample={setSelectedSample}
+          selectedCategory={selectedCategory}
+          selectedSample={selectedSample}
+        />
 
-        {tempTrack?.length === 0 ? (
-          <>
-            <p className="-mb-8 -mt-2 text-xs font-semibold text-neutral-100">
-              Sample
-            </p>
-            <ActionsTabs
-              {...{ getRootProps, getInputProps }}
-              isDragAccept={isDragAccept}
-              isDragReject={isDragReject}
-              addTrack={onSampleSave}
-              setSelectedCategory={setSelectedCategory}
-              setSelectedSample={setSelectedSample}
-              selectedCategory={selectedCategory}
-              selectedSample={selectedSample}
-            />
-          </>
-        ) : (
-          <div className="flex gap-4">
-            <FileIcon />
-            <p>{tempTrack[0]?.name}</p>
-          </div>
-        )}
         <p className="-mb-8 -mt-2 text-xs text-neutral-400">
           This is the sample that will be played when the track is triggered.
         </p>

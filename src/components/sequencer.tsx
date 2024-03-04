@@ -50,7 +50,11 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   const [checkedSteps, setCheckedSteps] = React.useState([] as string[]);
   const [currentStep, setCurrentStep] = React.useState(0);
   const [tempTrack, setTempTrack] = React.useState<TempTrack[] | null>([]);
-  const [samplesState, setSampleState] = React.useState(samples);
+  const [samplesState, setSampleState] = React.useState(
+    samples.map((s) => {
+      return { url: new Tone.Buffer(s.url), name: s.name };
+    })
+  );
   const [trackIds, setTrackIds] = React.useState([
     ...Array(samples.length).keys(),
   ]);
@@ -72,18 +76,16 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
   /**@ts-ignore */
   const storedFiles = useQuery(api.files.getFiles, { userId: user?.id });
 
-  // Check this it may lead to issues
   React.useEffect(() => {
     if (storedFiles && tempTrack && tempTrack.length === 0) {
-      const formatedStoredFiles = storedFiles.map((file: any) => ({
+      const formattedStoredFiles = storedFiles.map((file: any) => ({
         name: file.name,
         url: new Tone.Buffer(file.url),
       }));
       /**@ts-ignore */
-      setSampleState((prev) => [...prev, ...formatedStoredFiles]);
+      setSampleState((prev) => [...prev, ...formattedStoredFiles]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storedFiles]);
+  }, [storedFiles, tempTrack]);
 
   const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
     const formattedAcceptedFiles = acceptedFiles.map((file) => {
@@ -132,7 +134,9 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
     const url = new Tone.Buffer(sample.url);
     const name = sample.name;
     const track = { url, name };
-    setSampleState((prev) => [...prev, track]);
+    setSampleState((prev) => {
+      return [...prev, track];
+    });
   };
 
   const handleAddTrack = () => {
@@ -270,7 +274,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         });
       };
     }
-  }, [checkedSteps]);
+  }, [checkedSteps, samplesState, seqRef, tracksRef, lampsRef]);
 
   const handleBpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     Tone.Transport.bpm.value = Number(e.target.value);
@@ -296,7 +300,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         step.checked = false;
       });
     });
-  }, [setCheckedSteps, stepsRef]);
+  }, []);
 
   React.useEffect(() => {
     tracksRef.current = samplesState.map((sample, i) => {
@@ -332,7 +336,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       tracksRef.current.map((trk) => void trk.sampler.dispose());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [samplesState, numOfSteps]);
+  }, [samplesState]);
 
   React.useEffect(() => {
     tracksRef.current.forEach((track) => {
@@ -363,7 +367,7 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
       (file: any) => file.name === samplesState[index].name
     );
     if (file) deleteTrack({ name: samplesState[index].name ?? "" });
-    setSampleState((prev) => {
+    setTrackIds((prev) => {
       const modifiedArr = [...prev];
       modifiedArr.splice(index, 1);
       return [...modifiedArr];
@@ -373,6 +377,11 @@ export function Sequencer({ samples, numOfSteps = 16 }: Props) {
         const parsedStringArr = box.split("-");
         return !parsedStringArr.includes(index.toString());
       });
+    });
+    setSampleState((prev) => {
+      const modifiedArr = [...prev];
+      modifiedArr.splice(index, 1);
+      return [...modifiedArr];
     });
   };
 
